@@ -1,0 +1,10 @@
+User-agent: *
+Allow: /
+Disallow: /app/
+Disallow: /auth/
+Disallow: /share/
+Disallow: /s/
+Disallow: /api/
+Disallow: /protect/preview
+
+Sitemap: https://draftlock.com/sitemap.xml

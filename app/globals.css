@@ -1,0 +1,62 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* ============================================================================
+     DraftLock Brand Color System
+     ============================================================================ */
+  
+  /* Core Colors */
+  --paper: #F6F6F3; /* Paper Base - Main background and document surface */
+  --ink: #0E1116; /* Primary Ink - Body text, nav items, labels, paragraphs */
+  --white: #FFFFFF; /* White - Cards, modals, dropdowns */
+  
+  /* Brand Hierarchy Colors (Greens - for hierarchy, emphasis, structure only) */
+  --headline-green: #3B4953; /* Headline / Emphasis Green - H1-H3, section titles, editorial callouts */
+  --structure-green: #5A7863; /* Structural Green - Borders, icons, dividers, UI affordances */
+  --surface-green: #90AB8B; /* Surface Green - Large section callouts, editorial bands (use sparingly) */
+  --highlight-green: #EBF4DD; /* Soft Highlight Green - Highlighted cards, hover backgrounds */
+  
+  /* Semantic Status Colors */
+  --success: #1F9D55; /* Success / Verified - Only use when meaning is real */
+  --warning: #F59E0B; /* Warning - Only use when meaning is real */
+  --error: #DC2626; /* Error - Only use when meaning is real */
+  
+  /* Shadow System */
+  --shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05), 0 1px 2px -1px rgba(0, 0, 0, 0.05);
+  
+  /* ============================================================================
+     Legacy Variable Mappings (for backward compatibility)
+     ============================================================================ */
+  --bg: var(--paper);
+  --card-surface: var(--white);
+  --text: var(--ink); /* Primary text color - charcoal black */
+  --muted: var(--ink); /* Muted text uses same color with opacity (60-70%) */
+  --stroke: var(--structure-green); /* Borders use structural green with opacity */
+  --accent: var(--ink); /* Primary buttons use charcoal black */
+  --focus-ring: var(--structure-green); /* Focus rings use structural green */
+  --secondary-text: var(--ink); /* Base color (use opacity) */
+  --muted-text: var(--ink); /* Base color (use opacity) */
+  --verified: var(--success);
+  
+  /* Green hierarchy aliases for clarity */
+  --headline: var(--headline-green);
+  --structure: var(--structure-green);
+  --surface: var(--surface-green);
+  --highlight: var(--highlight-green);
+}
+
+@layer base {
+  body {
+    background-color: var(--bg);
+    color: var(--text);
+  }
+}
+
+@layer utilities {
+  /* Global focus ring color override */
+  *:focus-visible {
+    --tw-ring-color: var(--focus-ring);
+  }
+}

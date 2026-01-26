@@ -1,0 +1,9 @@
+- Never hardcode secrets; use env vars.
+- Validate/sanitize all user input.
+- Use parameterized queries for DB.
+- Avoid unsafe funcs like eval/exec.
+- Implement secure auth with hashes.
+- Set CSP, HSTS headers.
+- Enforce least privilege.
+- Log events without sensitive data.
+- Require security tests for PRs.
