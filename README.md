@@ -79,3 +79,9 @@ See `.env.example` for required environment variables.
 ## Built for Avalanche Build Games 2026
 
 ProofMark was built for the [Avalanche Build Games 2026](https://www.avax.network/buildergames) competition.
+
+---
+
+## Author
+
+Created by Heathen
