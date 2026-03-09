@@ -11,6 +11,16 @@
     <priority>0.8</priority>
   </url>
   <url>
+    <loc>https://proofmark.xyz/verify</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://proofmark.xyz/protect</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
     <loc>https://proofmark.xyz/pricing</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
@@ -19,6 +29,11 @@
     <loc>https://proofmark.xyz/support</loc>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://proofmark.xyz/sendproof</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
   </url>
   <url>
     <loc>https://proofmark.xyz/privacy</loc>
@@ -34,15 +49,5 @@
     <loc>https://proofmark.xyz/disclaimer</loc>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://proofmark.xyz/protect</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.9</priority>
-  </url>
-  <url>
-    <loc>https://proofmark.xyz/sendproof</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
   </url>
 </urlset>

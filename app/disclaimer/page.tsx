@@ -1,3 +1,10 @@
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Disclaimer",
+  description: "ProofMark disclaimer. ProofMark provides proof-of-origin, not legal advice or copyright registration.",
+};
+
 export default function DisclaimerPage() {
   return (
     <main className="min-h-screen">

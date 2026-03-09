@@ -1,3 +1,14 @@
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Support",
+  description: "Get help with ProofMark. Contact our team for questions about proof of creation, verification, or your account.",
+  openGraph: {
+    title: "ProofMark Support",
+    description: "Get help with ProofMark. Contact our team for questions about proof of creation, verification, or your account.",
+  },
+};
+
 export default function SupportPage() {
   return (
     <main className="min-h-screen">

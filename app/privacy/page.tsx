@@ -1,3 +1,10 @@
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Privacy Policy",
+  description: "How ProofMark handles your data. Only cryptographic fingerprints are stored on-chain. Your files remain private.",
+};
+
 export default function PrivacyPage() {
   return (
     <main className="min-h-screen">

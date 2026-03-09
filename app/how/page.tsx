@@ -1,4 +1,14 @@
 import Link from "next/link";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "How It Works",
+  description: "Upload your file, get a blockchain-verified proof of creation on Avalanche in under 60 seconds. No wallet or crypto knowledge needed.",
+  openGraph: {
+    title: "How ProofMark Works",
+    description: "Upload your file, get a blockchain-verified proof of creation on Avalanche in under 60 seconds.",
+  },
+};
 
 export default function HowItWorksPage() {
   return (

@@ -1,9 +1,14 @@
 import Link from 'next/link'
+import type { Metadata } from 'next'
 import { sendProofCopy } from '@/lib/copy/sendproof'
 
-export const metadata = {
-  title: "SendProof - ProofMark",
-  description: "Generate durable proof that something was sent or submitted at a specific moment.",
+export const metadata: Metadata = {
+  title: "SendProof",
+  description: "Generate durable proof that something was sent or submitted at a specific moment. Timestamped and verifiable.",
+  openGraph: {
+    title: "SendProof by ProofMark",
+    description: "Generate durable proof that something was sent or submitted at a specific moment.",
+  },
 };
 
 export default function SendProofPage() {

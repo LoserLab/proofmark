@@ -1,4 +1,14 @@
 import Link from "next/link";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Pricing",
+  description: "ProofMark pricing plans for individuals, professionals, and studios. Blockchain-verified proof of creation starting at $8/month.",
+  openGraph: {
+    title: "ProofMark Pricing",
+    description: "Blockchain-verified proof of creation starting at $8/month.",
+  },
+};
 
 export default function PricingPage() {
   return (

@@ -1,3 +1,10 @@
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Terms of Service",
+  description: "ProofMark terms of service. Read our terms for using blockchain proof-of-origin for creative work.",
+};
+
 export default function TermsPage() {
   return (
     <main className="min-h-screen">

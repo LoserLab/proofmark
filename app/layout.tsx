@@ -49,6 +49,44 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${playfairDisplay.variable} ${spaceGrotesk.variable}`}>
       <body className="bg-[var(--bg)] text-[var(--text)] antialiased">
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "SoftwareApplication",
+              "name": "ProofMark",
+              "applicationCategory": "SecurityApplication",
+              "operatingSystem": "Web",
+              "description": "Blockchain proof-of-origin for creative work. Upload your file, get a permanent, verifiable proof of creation on Avalanche.",
+              "url": "https://proofmark.xyz",
+              "offers": {
+                "@type": "Offer",
+                "price": "0",
+                "priceCurrency": "USD",
+                "description": "Free tier available"
+              },
+              "author": {
+                "@type": "Organization",
+                "name": "Heathen",
+                "url": "https://proofmark.xyz"
+              }
+            }),
+          }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "Organization",
+              "name": "ProofMark",
+              "url": "https://proofmark.xyz",
+              "logo": "https://proofmark.xyz/favicon.svg",
+              "description": "Blockchain proof-of-origin for creative work, powered by Avalanche."
+            }),
+          }}
+        />
         <NavBar />
         {children}
         <Footer />
