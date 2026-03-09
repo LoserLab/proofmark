@@ -353,7 +353,7 @@
     "yocto-queue": "^0.1.0"
   },
   "keywords": [],
-  "author": "ProofMark",
+  "author": "Heathen",
   "license": "UNLICENSED",
   "devDependencies": {
     "@types/react": "19.2.8"
