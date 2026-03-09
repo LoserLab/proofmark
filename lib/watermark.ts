@@ -9,7 +9,7 @@ export function buildWatermarkText(input: WatermarkInput) {
   const date = new Date(input.sharedAtUtcISO).toISOString().slice(0, 10); // YYYY-MM-DD
   const tokenShort = input.token.slice(0, 10);
 
-  return `DRAFTLOCK VIEW COPY • Shared with: ${viewer} • ${date} • Link: ${tokenShort}`;
+  return `PROOFMARK VIEW COPY • Shared with: ${viewer} • ${date} • Link: ${tokenShort}`;
 }
 
 export const WATERMARK_PLACEMENT = {

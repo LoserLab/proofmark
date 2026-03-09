@@ -2,7 +2,7 @@ import Link from 'next/link'
 import { sendProofCopy } from '@/lib/copy/sendproof'
 
 export const metadata = {
-  title: "SendProof - DraftLock",
+  title: "SendProof - ProofMark",
   description: "Generate durable proof that something was sent or submitted at a specific moment.",
 };
 

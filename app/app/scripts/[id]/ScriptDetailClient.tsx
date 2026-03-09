@@ -32,7 +32,7 @@ export default function ScriptDetailClient({
       const blobUrl = window.URL.createObjectURL(blob)
       const a = document.createElement('a')
       a.href = blobUrl
-      a.download = `draftlock-protection-packet-${scriptId}.zip`
+      a.download = `proofmark-protection-packet-${scriptId}.zip`
       document.body.appendChild(a)
       a.click()
       window.URL.revokeObjectURL(blobUrl)

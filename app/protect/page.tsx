@@ -4,6 +4,7 @@ import { useMemo, useState, useRef, useEffect } from "react";
 import { Stepper } from "@/components/Stepper";
 import EvidencePackPreview from "@/components/EvidencePackPreview";
 import SuccessPanel from "@/components/SuccessPanel";
+import ChainProofBanner from "@/components/ChainProofBanner";
 import ErrorNotice from "@/components/ErrorNotice";
 import RevisionReminder from "@/components/RevisionReminder";
 import PreparedForFilingBadge from "@/components/PreparedForFilingBadge";
@@ -442,47 +443,137 @@ export default function ProtectPage() {
                   <>
                     <Card
                       title="Upload your draft"
-                      desc="PDF or DOCX recommended. DraftLock stores a fingerprint and records the timestamp."
+                      desc="PDF or DOCX recommended. ProofMark stores a fingerprint and records the timestamp."
                     >
                       <div className="flex flex-col gap-3">
-                        <label className="block">
+                        {/* Drag-and-drop zone */}
+                        <div
+                          onDragOver={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            e.currentTarget.setAttribute("data-dragover", "true");
+                          }}
+                          onDragLeave={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            e.currentTarget.removeAttribute("data-dragover");
+                          }}
+                          onDrop={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            e.currentTarget.removeAttribute("data-dragover");
+                            const droppedFile = e.dataTransfer.files?.[0];
+                            if (droppedFile) {
+                              handleFileSelected(droppedFile);
+                            }
+                          }}
+                          onClick={() => fileInputRef.current?.click()}
+                          className="group relative cursor-pointer rounded-xl border-2 border-dashed border-[var(--stroke)] bg-[var(--bg)] p-8 text-center transition-all duration-200 hover:border-[var(--accent)] hover:bg-[rgba(235,244,221,0.3)] data-[dragover=true]:border-[var(--accent)] data-[dragover=true]:bg-[rgba(235,244,221,0.5)] data-[dragover=true]:scale-[1.01]"
+                        >
                           <input
                             ref={fileInputRef}
                             type="file"
                             accept=".pdf,.doc,.docx,.txt,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-                            className="block w-full text-sm text-[var(--text)] file:mr-4 file:rounded-md file:border file:border-[var(--stroke)] file:bg-white file:px-4 file:py-2 file:text-sm file:text-[var(--text)] file:hover:bg-[var(--bg)]"
+                            className="hidden"
                             onChange={(e) => handleFileSelected(e.target.files?.[0] || null)}
                           />
-                        </label>
 
+                          {/* Upload icon */}
+                          <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-[rgba(90,120,99,0.1)] transition-colors group-hover:bg-[rgba(90,120,99,0.15)]">
+                            <svg
+                              className="h-7 w-7 text-[var(--accent)] transition-transform group-hover:scale-110"
+                              fill="none"
+                              viewBox="0 0 24 24"
+                              stroke="currentColor"
+                              strokeWidth={1.5}
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                d="M12 16.5V9.75m0 0l3 3m-3-3l-3 3M6.75 19.5a4.5 4.5 0 01-1.41-8.775 5.25 5.25 0 0110.233-2.33 3 3 0 013.758 3.848A3.752 3.752 0 0118 19.5H6.75z"
+                              />
+                            </svg>
+                          </div>
+
+                          <p className="text-sm font-medium text-[var(--text)]">
+                            Drop your file here, or <span className="text-[var(--accent)] underline underline-offset-2">browse</span>
+                          </p>
+                          <p className="mt-1 text-xs text-[var(--muted)]">
+                            PDF, DOCX, or TXT up to 50MB
+                          </p>
+                        </div>
+
+                        {/* Selected file display */}
                         {(file || uploadState !== "idle") && (
-                          <div>
-                            <div className="inline-flex items-center gap-2 rounded-md border border-[#D8DEE6] bg-[#F1F4F8] px-3 py-1.5">
-                              <span className="text-sm text-slate-700">{file?.name ?? "Selected file"}</span>
+                          <div className="rounded-lg border border-[var(--stroke)] bg-white p-4">
+                            <div className="flex items-center gap-3">
+                              {/* File type icon */}
+                              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-[rgba(90,120,99,0.1)]">
+                                <svg
+                                  className="h-5 w-5 text-[var(--accent)]"
+                                  fill="none"
+                                  viewBox="0 0 24 24"
+                                  stroke="currentColor"
+                                  strokeWidth={1.5}
+                                >
+                                  <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"
+                                  />
+                                </svg>
+                              </div>
+
+                              <div className="min-w-0 flex-1">
+                                <p className="truncate text-sm font-medium text-[var(--text)]">
+                                  {file?.name ?? "Selected file"}
+                                </p>
+                                <p className="text-xs text-[var(--muted)]">
+                                  {file ? bytesToSize(file.size) : ""}
+                                  {uploadState === "uploading" && (
+                                    <span className="ml-2 inline-flex items-center gap-1">
+                                      <span className="inline-block h-1.5 w-1.5 animate-pulse rounded-full bg-[var(--accent)]"></span>
+                                      Uploading...
+                                    </span>
+                                  )}
+                                  {uploadState === "success" && (
+                                    <span className="ml-2 text-[var(--accent)]">Ready</span>
+                                  )}
+                                </p>
+                              </div>
+
+                              {/* Remove button */}
                               <button
                                 type="button"
-                                onClick={removeSelectedFile}
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  removeSelectedFile();
+                                }}
                                 disabled={uploadState === "uploading"}
                                 aria-label="Remove file"
-                                className="rounded p-1 text-slate-700 opacity-60 hover:opacity-100 hover:text-slate-900 disabled:opacity-30 focus:outline-none focus:ring-2 focus:ring-[var(--accent)] focus:ring-offset-1"
+                                className="shrink-0 rounded-lg p-2 text-[var(--muted)] transition-colors hover:bg-[var(--bg)] hover:text-[var(--text)] disabled:opacity-30 focus:outline-none focus:ring-2 focus:ring-[var(--accent)] focus:ring-offset-1"
                               >
-                                ×
+                                <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                  <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                                </svg>
                               </button>
                             </div>
+
+                            {/* Progress bar for uploading state */}
+                            {uploadState === "uploading" && (
+                              <div className="mt-3 h-1 overflow-hidden rounded-full bg-[var(--bg)]">
+                                <div className="h-full w-2/3 animate-pulse rounded-full bg-[var(--accent)] transition-all"></div>
+                              </div>
+                            )}
                           </div>
                         )}
 
                         {/* Status line */}
-                        <div className="text-xs text-[var(--muted)]">
-                          {uploadState === "idle" && "Select a file to continue."}
-                          {(uploadState === "ready" || uploadState === "uploading") && "Uploading…"}
-                          {uploadState === "success" && "Upload complete."}
-                          {uploadState === "error" && (
-                            <span className="text-red-600">
-                              {process.env.NODE_ENV === "production" ? "Upload failed. Please try again." : (uiError || uploadError || "Upload failed. Please try again.")}
-                            </span>
-                          )}
-                        </div>
+                        {uploadState === "error" && (
+                          <div className="text-xs text-red-600">
+                            {process.env.NODE_ENV === "production" ? "Upload failed. Please try again." : (uiError || uploadError || "Upload failed. Please try again.")}
+                          </div>
+                        )}
 
                         {/* Dev mode: show raw error message under status line */}
                         {process.env.NODE_ENV !== "production" && uploadState === "error" && (uiError || uploadError) && (
@@ -516,7 +607,7 @@ export default function ProtectPage() {
                       <div className="rounded-lg border border-[var(--stroke)] bg-white p-6 shadow-sm">
                         <div className="text-sm font-medium text-[var(--text)]">Privacy and control</div>
                         <div className="mt-2 text-sm text-[var(--muted)] leading-relaxed">
-                          You keep ownership of your work. DraftLock stores records and proof.
+                          You keep ownership of your work. ProofMark stores records and proof.
                           Sharing links are token-based and can be revoked if your system supports it.
                         </div>
                       </div>
@@ -524,7 +615,7 @@ export default function ProtectPage() {
                       <div className="rounded-lg border border-[var(--stroke)] bg-white p-6 shadow-sm">
                         <div className="text-sm font-medium text-[var(--text)]">Tip</div>
                         <div className="mt-2 text-sm text-[var(--muted)] leading-relaxed">
-                          If you iterate often, protect major milestones. DraftLock will keep the lineage clean.
+                          If you iterate often, protect major milestones. ProofMark will keep the lineage clean.
                         </div>
                       </div>
                     </div>
@@ -625,8 +716,8 @@ export default function ProtectPage() {
                     desc="Preview what will be recorded in your evidence packet."
                   >
                     <div className="text-xs text-[var(--muted)] leading-relaxed">
-                      DraftLock will generate an evidence pack containing timestamps, a file fingerprint,
-                      and version lineage. DraftLock is not a law firm and does not provide legal advice.
+                      ProofMark will generate an evidence pack containing timestamps, a file fingerprint,
+                      and version lineage. ProofMark is not a law firm and does not provide legal advice.
                     </div>
                     <div className="mt-4 flex justify-end">
                       <button
@@ -694,10 +785,18 @@ export default function ProtectPage() {
 
                           <div className="text-xs text-[var(--muted)] leading-relaxed max-w-2xl">
                             The evidence pack includes a timestamped record, file fingerprint, version lineage,
-                            and neutral metadata. DraftLock is not a law firm and does not provide legal advice.
+                            and neutral metadata. ProofMark is not a law firm and does not provide legal advice.
                           </div>
                         </>
                       ) : (
+                        <>
+                        {/* Blockchain proof banner */}
+                        {scriptId && versionId && (
+                          <div className="mb-4">
+                            <ChainProofBanner scriptId={scriptId} versionId={versionId} />
+                          </div>
+                        )}
+
                         <SuccessPanel
                           title="Evidence pack generated"
                           subtitle={
@@ -732,7 +831,7 @@ export default function ProtectPage() {
                                 <a
                                   className="inline-block px-6 py-3.5 rounded-md bg-[var(--accent)] text-white text-sm font-medium tracking-wide hover:opacity-90 transition-opacity focus:outline-none focus:ring-2 focus:ring-[var(--accent)] focus:ring-offset-2"
                                   href={packetDownloadUrl}
-                                  download={`DraftLock_Evidence_Pack_${scriptId}.zip`}
+                                  download={`ProofMark_Evidence_Pack_${scriptId}.zip`}
                                 >
                                   Download evidence pack
                                 </a>
@@ -747,7 +846,7 @@ export default function ProtectPage() {
                                 <a
                                   href={`/api/scripts/${scriptId}/packet?versionId=${versionId}`}
                                   className="inline-block px-6 py-3 rounded-md border border-[var(--stroke)] text-sm text-[var(--text)] hover:border-[var(--accent)] hover:text-[var(--accent)] transition-colors focus:outline-none focus:ring-2 focus:ring-[var(--accent)] focus:ring-offset-2"
-                                  download={`DraftLock_Evidence_Pack_${scriptId}.zip`}
+                                  download={`ProofMark_Evidence_Pack_${scriptId}.zip`}
                                 >
                                   Download again
                                 </a>
@@ -793,13 +892,13 @@ export default function ProtectPage() {
                           checklist={[
                             "Save the evidence pack somewhere you control (local + cloud).",
                             "If you plan to register, keep the title consistent across filings and versions.",
-                            "If sharing with collaborators, use a DraftLock link instead of sending raw files.",
-                            "For U.S. copyright registration, DraftLock can support organization and evidence, but it is not legal advice.",
+                            "If sharing with collaborators, use a ProofMark link instead of sending raw files.",
+                            "For U.S. copyright registration, ProofMark can support organization and evidence, but it is not legal advice.",
                           ]}
                           footnote={
                             <div className="space-y-6">
                               <p className="text-xs text-[var(--muted)] leading-relaxed">
-                                If you revise the work, protect major milestones. DraftLock keeps the lineage clean and the record easy to follow.
+                                If you revise the work, protect major milestones. ProofMark keeps the lineage clean and the record easy to follow.
                               </p>
                               <div className="pt-6 border-t border-[var(--stroke)]">
                                 <div className="text-sm font-medium text-[var(--text)] mb-2">
@@ -826,6 +925,7 @@ export default function ProtectPage() {
                             </div>
                           }
                         />
+                        </>
                       )}
 
                       {packetError && (
@@ -918,7 +1018,7 @@ export default function ProtectPage() {
                   <div className="rounded-lg border border-[var(--stroke)] bg-white p-6 shadow-sm">
                     <div className="text-sm font-medium text-[var(--text)]">Privacy and control</div>
                     <div className="mt-2 text-sm text-[var(--muted)] leading-relaxed">
-                      You keep ownership of your work. DraftLock stores records and proof.
+                      You keep ownership of your work. ProofMark stores records and proof.
                       Sharing links are token-based and can be revoked if your system supports it.
                     </div>
                   </div>
@@ -926,7 +1026,7 @@ export default function ProtectPage() {
                   <div className="rounded-lg border border-[var(--stroke)] bg-white p-6 shadow-sm">
                     <div className="text-sm font-medium text-[var(--text)]">Tip</div>
                     <div className="mt-2 text-sm text-[var(--muted)] leading-relaxed">
-                      If you iterate often, protect major milestones. DraftLock will keep the lineage clean.
+                      If you iterate often, protect major milestones. ProofMark will keep the lineage clean.
                     </div>
                   </div>
                 </div>
@@ -935,7 +1035,7 @@ export default function ProtectPage() {
 
             {/* Bottom legal note */}
             <div className="text-xs text-[var(--muted)] leading-relaxed max-w-3xl">
-              DraftLock supports many kinds of drafts. DraftLock is not a law firm and does not provide legal advice.
+              ProofMark supports many kinds of drafts. ProofMark is not a law firm and does not provide legal advice.
             </div>
           </div>
         </div>

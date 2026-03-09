@@ -44,3 +44,9 @@ next-env.d.ts
 
 # markdowns
 /markdown
+
+# supabase temp files
+supabase/.temp/
+
+# contracts build cache
+contracts/.next/

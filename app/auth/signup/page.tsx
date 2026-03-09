@@ -81,7 +81,7 @@ export default function SignupPage() {
       <div className="max-w-md w-full space-y-8">
         <div>
           <h2 className="mt-6 text-center text-3xl font-extrabold text-[var(--text)]">
-            Create your DraftLock account
+            Create your ProofMark account
           </h2>
         </div>
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>

@@ -1,28 +1,36 @@
 import { NextResponse } from "next/server";
-import { supabaseServerService } from "@/lib/supabase/server";
+import { createClient, supabaseServerService } from "@/lib/supabase/server";
 import { randomToken } from "@/lib/crypto";
 
 export async function POST(req: Request) {
-  const supabase = supabaseServerService();
-  const { userId, scriptId, versionId, viewerLabel } = await req.json();
+  // Authenticate from session (never trust userId from body)
+  const authClient = await createClient();
+  const {
+    data: { user },
+  } = await authClient.auth.getUser();
 
-  if (!userId || !scriptId || !versionId) {
+  if (!user) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  const userId = user.id;
+  const supabase = supabaseServerService();
+  const { scriptId, versionId, viewerLabel } = await req.json();
+
+  if (!scriptId || !versionId) {
     return NextResponse.json({ error: "Missing fields" }, { status: 400 });
   }
 
-  // Verify ownership: script must belong to this user
+  // Verify ownership: script must belong to authenticated user
   const { data: script, error: sErr } = await supabase
     .from("scripts")
     .select("id, user_id")
     .eq("id", scriptId)
+    .eq("user_id", userId)
     .single();
 
   if (sErr || !script) {
     return NextResponse.json({ error: "Draft not found" }, { status: 404 });
-  }
-
-  if (script.user_id !== userId) {
-    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
   // Verify version belongs to script
@@ -54,7 +62,10 @@ export async function POST(req: Request) {
     .select("*")
     .single();
 
-  if (lErr) return NextResponse.json({ error: lErr.message }, { status: 500 });
+  if (lErr) {
+    console.error("[share/create] Insert error:", lErr.message);
+    return NextResponse.json({ error: "Failed to create share link" }, { status: 500 });
+  }
 
   await supabase.from("audit_log").insert({
     user_id: userId,

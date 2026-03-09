@@ -5,6 +5,7 @@ import JSZip from "jszip";
 import { config } from "@/lib/config";
 import { buildMetadataSummary } from "@/lib/metadata-summary";
 import { buildReceiptJSON } from "@/lib/receipt-json";
+import { generateCertificatePdf } from "@/lib/certificate-pdf";
 
 async function generatePacket(req: Request, { params }: { params: { scriptId: string } }) {
   // Get userId from auth session
@@ -76,7 +77,7 @@ async function generatePacket(req: Request, { params }: { params: { scriptId: st
       return new NextResponse(packetBuffer as any, {
         headers: {
           "Content-Type": "application/zip",
-          "Content-Disposition": `attachment; filename="DraftLock_Evidence_Pack_${script.id}.zip"`,
+          "Content-Disposition": `attachment; filename="ProofMark_Evidence_Pack_${script.id}.zip"`,
         },
       });
     }
@@ -131,7 +132,7 @@ async function generatePacket(req: Request, { params }: { params: { scriptId: st
   // Build metadata summary
   const metadataSummary = buildMetadataSummary({ script, version });
 
-  // Build receipt JSON
+  // Build receipt JSON (with blockchain data if available)
   const receiptJson = buildReceiptJSON({
     title: script.title,
     scriptId: script.id,
@@ -143,6 +144,10 @@ async function generatePacket(req: Request, { params }: { params: { scriptId: st
     timestampUtc: new Date(version.committed_at).toISOString(),
     workType: script.work_type,
     mimeType: version.mime_type,
+    txHash: version.tx_hash,
+    blockNumber: version.block_number ? Number(version.block_number) : null,
+    chainStatus: version.chain_status,
+    chainRegisteredAt: version.chain_registered_at,
   });
 
   // Fetch audit log entries for this version
@@ -150,7 +155,7 @@ async function generatePacket(req: Request, { params }: { params: { scriptId: st
     .from("audit_log")
     .select("*")
     .eq("script_id", script.id)
-    .eq("version_id", version.id)
+    .eq("script_version_id", version.id)
     .order("created_at", { ascending: true });
 
   // Create the evidence pack in /evidence/ folder structure
@@ -201,9 +206,28 @@ async function generatePacket(req: Request, { params }: { params: { scriptId: st
   evidenceFolder.file("audit_log.json", JSON.stringify({
     generated_at_utc: new Date().toISOString(),
     script_id: script.id,
-    version_id: version.id,
+    script_version_id: version.id,
     entries: auditEntries || [],
   }, null, 2));
+
+  // Generate and add certificate PDF
+  try {
+    const appUrl = process.env.NEXT_PUBLIC_APP_URL || "https://proofmark.xyz";
+    const certificateBytes = await generateCertificatePdf({
+      title: script.title || "Untitled Work",
+      workType: script.work_type || "Document",
+      sha256: version.sha256,
+      committedAt: version.committed_at,
+      versionId: version.id,
+      filename: version.original_filename || "file",
+      txHash: version.tx_hash,
+      blockNumber: version.block_number ? Number(version.block_number) : undefined,
+      verificationUrl: `${appUrl}/verify?hash=${version.sha256}`,
+    });
+    evidenceFolder.file("certificate.pdf", certificateBytes);
+  } catch (certErr) {
+    console.warn("[api/scripts/packet] Certificate generation failed, skipping:", certErr);
+  }
 
   const zipBuf = await finalZip.generateAsync({ type: "nodebuffer" });
 
@@ -230,16 +254,16 @@ async function generatePacket(req: Request, { params }: { params: { scriptId: st
     await supabase.from("audit_log").insert({
       user_id: userId,
       script_id: script.id,
-      version_id: version.id,
+      script_version_id: version.id,
       action: "packet_generated",
-      details: { versionId: version.id, packetPath },
+      metadata: { versionId: version.id, packetPath },
     });
   }
 
   return new NextResponse(zipBuf as any, {
     headers: {
       "Content-Type": "application/zip",
-      "Content-Disposition": `attachment; filename="DraftLock_Evidence_Pack_${script.id}.zip"`
+      "Content-Disposition": `attachment; filename="ProofMark_Evidence_Pack_${script.id}.zip"`
     }
   });
 }

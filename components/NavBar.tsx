@@ -1,5 +1,5 @@
 // ============================================================================
-// HEADER LOCKED — DO NOT MODIFY
+// HEADER LOCKED - DO NOT MODIFY
 // ============================================================================
 // This header (logo + navigation) is final and locked.
 // 
@@ -118,7 +118,7 @@ export default function NavBar() {
               href="/"
               className="text-sm font-medium tracking-wide text-[var(--text)] hover:text-[var(--headline)] transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-[var(--focus-ring)] focus:ring-offset-2 rounded"
             >
-              DraftLock
+              ProofMark
             </Link>
           </div>
 

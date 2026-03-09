@@ -47,7 +47,7 @@ export default function RoutesPage() {
     <main className="min-h-screen bg-[var(--bg)]">
       <div className="max-w-4xl mx-auto px-6 py-12">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-[var(--text)] mb-2">DraftLock Routes</h1>
+          <h1 className="text-3xl font-bold text-[var(--text)] mb-2">ProofMark Routes</h1>
           <p className="text-sm text-[var(--muted)]">
             Development-only route listing. This page is not accessible in production.
           </p>

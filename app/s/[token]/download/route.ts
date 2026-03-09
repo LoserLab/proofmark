@@ -51,7 +51,7 @@ export async function GET(req: Request, { params }: { params: { token: string } 
   return new NextResponse(watermarked, {
     headers: {
       "Content-Type": "application/pdf",
-      "Content-Disposition": `attachment; filename="DraftLock_ViewCopy.pdf"`
+      "Content-Disposition": `attachment; filename="ProofMark_ViewCopy.pdf"`
     }
   });
 }

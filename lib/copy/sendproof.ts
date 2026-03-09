@@ -13,7 +13,7 @@ export const sendProofCopy = {
   howItWorks: {
     title: "Proof beyond creation",
     body:
-      "DraftLock creates durable proof when a draft is created and archived. " +
+      "ProofMark creates durable proof when a draft is created and archived. " +
       "SendProof extends that record to moments when a draft is sent, submitted, or delivered.",
     disclaimer: "SendProof records actions, not outcomes.",
   },

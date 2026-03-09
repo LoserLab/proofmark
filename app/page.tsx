@@ -1,194 +1,787 @@
 import EvidencePacketPreview from "@/components/EvidencePacketPreview";
-import HeroVisual from "@/components/HeroVisual";
 import BreathStrip from "@/components/BreathStrip";
-import Image from "next/image";
+import Link from "next/link";
+
+/* ─────────────────────────────────────────────────────────────
+   ProofMark Landing Page
+   "Prove you made it first."
+   Dark mode + weird gradient (dusty rose / amber / sage)
+   ───────────────────────────────────────────────────────────── */
 
 export default function Home() {
   return (
-    <main className="min-h-screen">
-      {/* HERO */}
-      <section className="max-w-7xl mx-auto px-6 pt-48 pb-32">
-        <div className="grid lg:grid-cols-12 gap-24 items-center">
-          {/* Left: Editorial copy */}
-          <div className="lg:col-span-6 space-y-8">
-            <h1 className="text-5xl md:text-6xl font-semibold leading-tight tracking-tight text-[var(--headline)]">
-              Clear proof for your work, when it matters.
-            </h1>
+    <main className="overflow-x-hidden">
+      <style>{`
+        @keyframes dl-fadeUp {
+          from { opacity: 0; transform: translateY(24px); }
+          to   { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes dl-fadeIn {
+          from { opacity: 0; }
+          to   { opacity: 1; }
+        }
+        @keyframes dl-slideRight {
+          from { opacity: 0; transform: translateX(-20px); }
+          to   { opacity: 1; transform: translateX(0); }
+        }
+        @keyframes dl-scaleIn {
+          from { opacity: 0; transform: scale(0.88); }
+          to   { opacity: 1; transform: scale(1); }
+        }
+        @keyframes dl-lineGrow {
+          from { transform: scaleX(0); }
+          to   { transform: scaleX(1); }
+        }
+        @keyframes dl-gradientShift {
+          0%, 100% { background-position: 0% 50%; }
+          50%      { background-position: 100% 50%; }
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .dl-anim { animation: none !important; opacity: 1 !important; }
+        }
+        .dl-gradient-text {
+          background: linear-gradient(135deg, #6B4C6E, #3D5A6E, #5A6E5C);
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          background-clip: text;
+        }
+        .dl-gradient-btn {
+          background: linear-gradient(135deg, #6B4C6E, #3D5A6E 50%, #5A6E5C);
+          background-size: 150% 150%;
+          transition: all 0.3s ease;
+        }
+        .dl-gradient-btn:hover {
+          background-size: 200% 200%;
+          animation: dl-gradientShift 4s ease infinite;
+          transform: scale(1.02);
+        }
+        .dl-gradient-line {
+          background: linear-gradient(90deg, #6B4C6E, #3D5A6E, #5A6E5C);
+        }
+      `}</style>
 
-            <p className="text-lg leading-relaxed text-[var(--muted)] max-w-xl">
-              DraftLock creates timestamped records of your drafts and actions. Track versions, generate neutral evidence, and keep clean documentation you can archive or reference later.
+      {/* ═══════════════════════════════════════════════════════
+          SECTION 1 — HERO
+          ═══════════════════════════════════════════════════════ */}
+      <section
+        className="relative flex flex-col justify-center overflow-hidden"
+        style={{
+          minHeight: "100vh",
+          background: "var(--brand-dark)",
+        }}
+      >
+        {/* Atmospheric gradient orb */}
+        <div
+          className="absolute pointer-events-none"
+          style={{
+            width: "900px",
+            height: "700px",
+            right: "-12%",
+            top: "10%",
+            background: "radial-gradient(ellipse at center, rgba(196,132,122,0.06) 0%, rgba(201,169,110,0.04) 35%, rgba(123,142,106,0.05) 65%, transparent 85%)",
+            filter: "blur(80px)",
+          }}
+        />
+
+        {/* Grain */}
+        <div
+          className="absolute inset-0 pointer-events-none opacity-[0.2]"
+          style={{
+            backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.06'/%3E%3C/svg%3E")`,
+            backgroundSize: "200px 200px",
+          }}
+        />
+
+        <div className="max-w-7xl mx-auto px-6 md:px-12 pt-40 md:pt-48 pb-24 md:pb-32 relative z-10 w-full">
+          {/* Label */}
+          <div
+            className="dl-anim mb-10 md:mb-14"
+            style={{ animation: "dl-fadeIn 0.8s ease-out 0.1s both" }}
+          >
+            <span
+              className="inline-flex items-center gap-3 text-[10px] md:text-[11px] tracking-[0.3em] uppercase"
+              style={{
+                color: "rgba(255,255,255,0.3)",
+                fontFamily: "var(--font-body)",
+                fontWeight: 500,
+              }}
+            >
+              <span
+                className="dl-anim dl-gradient-line inline-block h-px w-8"
+                style={{
+                  opacity: 0.6,
+                  animation: "dl-lineGrow 0.6s ease-out 0.3s both",
+                  transformOrigin: "left",
+                }}
+              />
+              Creation Receipts
+            </span>
+          </div>
+
+          {/* Headline */}
+          <h1
+            className="dl-anim mb-10 md:mb-14"
+            style={{
+              fontFamily: "var(--font-display)",
+              animation: "dl-fadeUp 0.8s ease-out 0.2s both",
+              lineHeight: 0.92,
+              letterSpacing: "-0.03em",
+            }}
+          >
+            <span
+              className="block text-[3rem] sm:text-[4.5rem] md:text-[6.5rem] lg:text-[8.5rem]"
+              style={{ color: "#FFFFFF" }}
+            >
+              Prove you
+            </span>
+            <span
+              className="block text-[3rem] sm:text-[4.5rem] md:text-[6.5rem] lg:text-[8.5rem]"
+              style={{ color: "#FFFFFF" }}
+            >
+              made it{" "}
+              <span className="dl-gradient-text" style={{ fontStyle: "italic" }}>
+                first.
+              </span>
+            </span>
+          </h1>
+
+          {/* Subtitle + CTAs */}
+          <div className="max-w-lg">
+            <p
+              className="dl-anim text-base md:text-lg leading-relaxed mb-10"
+              style={{
+                color: "rgba(255,255,255,0.4)",
+                fontFamily: "var(--font-body)",
+                animation: "dl-slideRight 0.6s ease-out 0.45s both",
+              }}
+            >
+              Before you pitch it, send it, or share it. ProofMark creates
+              permanent, blockchain-verified proof of your creative work
+              on Avalanche in under 60 seconds.
             </p>
 
-            <div className="text-sm text-[var(--muted)] leading-relaxed">
-              Built for creatives who want clarity without legal complexity.
-            </div>
-
-            {/* What DraftLock creates - simple list */}
-            <div className="space-y-2 text-sm text-[var(--text)]">
-              <div>• Timestamped authorship record</div>
-              <div>• Cryptographic file fingerprint</div>
-              <div>• Version lineage and sharing log</div>
-            </div>
-
-            {/* CTAs */}
-            <div className="flex flex-wrap gap-4 pt-6">
-              <a
+            <div
+              className="dl-anim flex flex-wrap gap-4"
+              style={{ animation: "dl-fadeUp 0.6s ease-out 0.6s both" }}
+            >
+              <Link
                 href="/protect"
-                className="px-6 py-3.5 rounded-md bg-[var(--accent)] text-white text-sm font-medium tracking-wide hover:opacity-90 transition-opacity focus:outline-none focus:ring-2 focus:ring-[var(--accent)] focus:ring-offset-2"
+                className="dl-gradient-btn inline-flex items-center gap-2.5 px-7 py-3.5 rounded text-sm font-medium tracking-wide focus:outline-none focus:ring-2 focus:ring-[var(--brand-ink-blue)] focus:ring-offset-2 focus:ring-offset-[#0A0A0A]"
+                style={{
+                  color: "#FFFFFF",
+                  fontFamily: "var(--font-body)",
+                }}
               >
-                Create a record
-              </a>
+                <svg
+                  width="15"
+                  height="15"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+                  <path d="M7 11V7a5 5 0 0110 0v4" />
+                </svg>
+                Lock Your First Draft
+              </Link>
               <a
-                href="#what-you-receive"
-                className="px-6 py-3 rounded-md border border-[var(--stroke)] text-sm font-medium hover:border-[var(--structure)] hover:text-[var(--structure)] hover:bg-[var(--highlight)] transition-colors focus:outline-none focus:ring-2 focus:ring-[var(--focus-ring)] focus:ring-offset-2"
+                href="#how-it-works"
+                className="inline-flex items-center gap-2 px-7 py-3.5 rounded text-sm font-medium tracking-wide border transition-all duration-200 hover:bg-[rgba(255,255,255,0.04)] hover:border-[rgba(255,255,255,0.2)] focus:outline-none focus:ring-2 focus:ring-white/20 focus:ring-offset-2 focus:ring-offset-[#0A0A0A]"
+                style={{
+                  borderColor: "rgba(255,255,255,0.12)",
+                  color: "rgba(255,255,255,0.5)",
+                  fontFamily: "var(--font-body)",
+                }}
               >
-                View an example packet
+                See How It Works
               </a>
             </div>
           </div>
+        </div>
 
-          {/* Right: Modern abstract visual */}
-          <div className="lg:col-span-6 flex justify-center lg:justify-end">
-            <HeroVisual />
+        {/* Bottom gradient line */}
+        <div
+          className="absolute bottom-0 left-0 right-0 h-px dl-gradient-line"
+          style={{ opacity: 0.25 }}
+        />
+      </section>
+
+      {/* ═══════════════════════════════════════════════════════
+          SECTION 2 — THE VILLAIN
+          ═══════════════════════════════════════════════════════ */}
+      <section
+        className="py-28 md:py-40"
+        style={{ background: "var(--brand-light)" }}
+      >
+        <div className="max-w-6xl mx-auto px-6 md:px-12">
+          <h2
+            className="dl-anim text-[2rem] sm:text-[2.5rem] md:text-[3.5rem] lg:text-[4.5rem] tracking-tight leading-[1.05] mb-16 md:mb-20"
+            style={{
+              fontFamily: "var(--font-display)",
+              color: "#0A0A0A",
+              animation: "dl-fadeUp 0.7s ease-out 0.1s both",
+            }}
+          >
+            You create. They take.
+            <br />
+            <span style={{ color: "rgba(10,10,10,0.2)" }}>
+              You can&apos;t prove a thing.
+            </span>
+          </h2>
+
+          {/* Scenario blocks */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-0 mb-16 md:mb-20">
+            {[
+              {
+                label: "The Screenplay",
+                text: "A screenwriter shares a script with a producer. Six months later, a suspiciously similar movie gets greenlit.",
+                accent: "var(--brand-plum)",
+              },
+              {
+                label: "The Song",
+                text: "A songwriter demos a hook in a session. It shows up on someone else\u2019s album. No proof who wrote it first.",
+                accent: "var(--brand-ink-blue)",
+              },
+              {
+                label: "The Pitch",
+                text: "A founder pitches an idea to investors. The VC passes, then funds a clone three months later.",
+                accent: "var(--brand-ashen)",
+              },
+            ].map((item, i) => (
+              <div
+                key={item.label}
+                className="dl-anim p-8 md:p-10"
+                style={{
+                  borderTop: "1px solid rgba(10,10,10,0.08)",
+                  borderRight: i < 2 ? "1px solid rgba(10,10,10,0.08)" : "none",
+                  animation: `dl-fadeUp 0.5s ease-out ${0.25 + i * 0.1}s both`,
+                }}
+              >
+                <div
+                  className="text-[10px] font-medium tracking-[0.2em] uppercase mb-5"
+                  style={{
+                    color: item.accent,
+                    fontFamily: "var(--font-body)",
+                  }}
+                >
+                  {item.label}
+                </div>
+                <p
+                  className="text-sm md:text-base leading-relaxed"
+                  style={{
+                    color: "rgba(10,10,10,0.55)",
+                    fontFamily: "var(--font-body)",
+                  }}
+                >
+                  {item.text}
+                </p>
+              </div>
+            ))}
+          </div>
+
+          <div
+            className="dl-anim max-w-2xl"
+            style={{ animation: "dl-fadeUp 0.6s ease-out 0.55s both" }}
+          >
+            <p
+              className="text-base md:text-lg leading-relaxed mb-6"
+              style={{
+                color: "rgba(10,10,10,0.45)",
+                fontFamily: "var(--font-body)",
+              }}
+            >
+              It happens every day. And the creator almost never wins. Not
+              because they weren&apos;t first. Because they can&apos;t prove they
+              were first.
+            </p>
+            <p
+              className="text-2xl md:text-3xl"
+              style={{
+                fontFamily: "var(--font-display)",
+                color: "#0A0A0A",
+              }}
+            >
+              ProofMark changes that.
+            </p>
           </div>
         </div>
       </section>
 
-      {/* Breath strip */}
+      {/* ═══════════════════════════════════════════════════════
+          SECTION 3 — HOW IT WORKS
+          ═══════════════════════════════════════════════════════ */}
+      <section
+        id="how-it-works"
+        className="py-28 md:py-40 relative overflow-hidden"
+        style={{ background: "var(--brand-dark)" }}
+      >
+        {/* Subtle gradient glow bottom-left */}
+        <div
+          className="absolute pointer-events-none"
+          style={{
+            width: "600px",
+            height: "400px",
+            left: "-5%",
+            bottom: "0",
+            background: "radial-gradient(ellipse at center, rgba(123,142,106,0.05) 0%, rgba(201,169,110,0.03) 50%, transparent 80%)",
+            filter: "blur(60px)",
+          }}
+        />
+
+        <div className="max-w-6xl mx-auto px-6 md:px-12 relative z-10">
+          <div className="mb-20 md:mb-28 max-w-xl">
+            <h2
+              className="dl-anim text-3xl md:text-4xl lg:text-5xl tracking-tight mb-5"
+              style={{
+                fontFamily: "var(--font-display)",
+                color: "#FFFFFF",
+                animation: "dl-fadeUp 0.6s ease-out 0.1s both",
+              }}
+            >
+              Three steps. Sixty seconds.
+            </h2>
+            <p
+              className="dl-anim text-base leading-relaxed"
+              style={{
+                color: "rgba(255,255,255,0.35)",
+                fontFamily: "var(--font-body)",
+                animation: "dl-fadeUp 0.6s ease-out 0.2s both",
+              }}
+            >
+              No technical expertise needed. Just your file and half a minute.
+            </p>
+          </div>
+
+          <div className="space-y-20 md:space-y-28">
+            {[
+              {
+                num: "01",
+                title: "Drop",
+                desc: "Drop your file. ProofMark computes a unique SHA-256 fingerprint and securely stores your work for evidence generation.",
+                color: "var(--brand-plum)",
+              },
+              {
+                num: "02",
+                title: "Lock",
+                desc: "Your fingerprint is registered on the Avalanche blockchain with a permanent, tamper-proof timestamp. Immutable. Verifiable. Yours.",
+                color: "var(--brand-ink-blue)",
+              },
+              {
+                num: "03",
+                title: "Prove",
+                desc: "Download your certificate, share a verification link, or embed a badge. Anyone can confirm your proof independently.",
+                color: "var(--brand-ashen)",
+              },
+            ].map((step, i) => (
+              <div
+                key={step.num}
+                className="dl-anim grid grid-cols-12 gap-6 md:gap-10 items-start"
+                style={{
+                  animation: `dl-fadeUp 0.6s ease-out ${0.25 + i * 0.15}s both`,
+                }}
+              >
+                <div className="col-span-4 md:col-span-3 lg:col-span-2">
+                  <span
+                    className="dl-anim block font-mono text-[4rem] md:text-[6rem] lg:text-[7rem] tracking-tighter font-light leading-none"
+                    style={{
+                      color: step.color,
+                      opacity: 0.15,
+                      animation: `dl-scaleIn 0.5s ease-out ${0.3 + i * 0.15}s both`,
+                    }}
+                  >
+                    {step.num}
+                  </span>
+                </div>
+
+                <div className="col-span-8 md:col-span-9 lg:col-span-10 pt-3 md:pt-5">
+                  <h3
+                    className="text-2xl md:text-3xl mb-4"
+                    style={{
+                      fontFamily: "var(--font-display)",
+                      color: "#FFFFFF",
+                    }}
+                  >
+                    {step.title}
+                  </h3>
+                  <p
+                    className="text-sm md:text-base leading-relaxed max-w-lg"
+                    style={{
+                      color: "rgba(255,255,255,0.4)",
+                      fontFamily: "var(--font-body)",
+                    }}
+                  >
+                    {step.desc}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ═══════════════════════════════════════════════════════
+          SECTION 4 — BREATH STRIP
+          ═══════════════════════════════════════════════════════ */}
       <BreathStrip />
 
-      {/* Example packet section */}
-      <section id="what-you-receive" className="bg-[var(--bg)]">
-        <div className="mx-auto max-w-6xl px-6 py-20">
-          <div className="grid grid-cols-1 gap-12 lg:grid-cols-2 lg:items-center">
+      {/* ═══════════════════════════════════════════════════════
+          SECTION 5 — LOCK IT BEFORE...
+          ═══════════════════════════════════════════════════════ */}
+      <section
+        className="py-28 md:py-40"
+        style={{ background: "var(--brand-light)" }}
+      >
+        <div className="max-w-6xl mx-auto px-6 md:px-12">
+          <div className="mb-16 md:mb-20 max-w-xl">
+            <h2
+              className="dl-anim text-3xl md:text-4xl lg:text-5xl tracking-tight mb-4"
+              style={{
+                fontFamily: "var(--font-display)",
+                color: "#0A0A0A",
+                animation: "dl-fadeUp 0.6s ease-out 0.1s both",
+              }}
+            >
+              Lock it before...
+            </h2>
+            <p
+              className="dl-anim text-base leading-relaxed"
+              style={{
+                color: "rgba(10,10,10,0.4)",
+                fontFamily: "var(--font-body)",
+                animation: "dl-fadeUp 0.6s ease-out 0.2s both",
+              }}
+            >
+              60 seconds between vulnerability and proof.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-0">
+            {[
+              {
+                title: "The pitch meeting",
+                desc: "Your deck, your concept, your strategy. Timestamped before you walk in the room.",
+              },
+              {
+                title: "The collaboration",
+                desc: "You brought the hook. Prove it was yours before the session started.",
+              },
+              {
+                title: "The query letter",
+                desc: "Your manuscript, your synopsis. Proof that predates every submission.",
+              },
+              {
+                title: 'Hitting "send"',
+                desc: "Any file, any format, any creative work. 60 seconds to permanent proof.",
+              },
+            ].map((item, i) => (
+              <div
+                key={item.title}
+                className="dl-anim p-8 md:p-10 transition-colors duration-300 hover:bg-[rgba(10,10,10,0.02)]"
+                style={{
+                  borderTop: "1px solid rgba(10,10,10,0.08)",
+                  borderRight: i % 2 === 0 ? "1px solid rgba(10,10,10,0.08)" : "none",
+                  borderBottom: i >= 2 ? "1px solid rgba(10,10,10,0.08)" : "none",
+                  animation: `dl-fadeUp 0.5s ease-out ${0.15 + i * 0.08}s both`,
+                }}
+              >
+                <h3
+                  className="text-lg md:text-xl mb-3"
+                  style={{
+                    fontFamily: "var(--font-display)",
+                    color: "#0A0A0A",
+                  }}
+                >
+                  {item.title}
+                </h3>
+                <p
+                  className="text-sm leading-relaxed"
+                  style={{
+                    color: "rgba(10,10,10,0.45)",
+                    fontFamily: "var(--font-body)",
+                  }}
+                >
+                  {item.desc}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ═══════════════════════════════════════════════════════
+          SECTION 6 — EVIDENCE PACKET
+          ═══════════════════════════════════════════════════════ */}
+      <section
+        id="what-you-receive"
+        className="relative overflow-hidden"
+        style={{ background: "var(--brand-dark)" }}
+      >
+        {/* Gradient accent top line */}
+        <div
+          className="absolute top-0 left-0 right-0 h-px dl-gradient-line"
+          style={{ opacity: 0.3 }}
+        />
+
+        <div className="mx-auto max-w-6xl px-6 md:px-12 py-28 md:py-40 relative z-10">
+          <div className="grid grid-cols-1 gap-16 lg:grid-cols-2 lg:items-center">
             {/* Left: Preview */}
-            <div className="lg:sticky lg:top-24">
-              <div className="mx-auto w-full max-w-md">
+            <div className="lg:sticky lg:top-24 flex justify-center">
+              <div
+                className="dl-anim mx-auto w-full max-w-md"
+                style={{ animation: "dl-slideRight 0.7s ease-out 0.1s both" }}
+              >
                 <EvidencePacketPreview size="default" />
               </div>
             </div>
 
             {/* Right: Copy */}
             <div className="max-w-xl">
-              <h2 className="text-3xl font-semibold tracking-tight text-[var(--headline)]">
+              <h2
+                className="dl-anim text-3xl md:text-4xl tracking-tight mb-5"
+                style={{
+                  fontFamily: "var(--font-display)",
+                  color: "#FFFFFF",
+                  animation: "dl-fadeUp 0.6s ease-out 0.1s both",
+                }}
+              >
                 What you receive
               </h2>
 
-              <p className="mt-4 text-base leading-relaxed text-[var(--muted)]">
-                Each record is a complete, timestamped snapshot of a moment. That moment might be when a draft was created, or when something was sent or submitted.
+              <p
+                className="dl-anim text-base leading-relaxed mb-10"
+                style={{
+                  color: "rgba(255,255,255,0.4)",
+                  fontFamily: "var(--font-body)",
+                  animation: "dl-fadeUp 0.6s ease-out 0.2s both",
+                }}
+              >
+                Each record is a complete, independently verifiable proof package
+                tied to a specific moment in time.
               </p>
 
-              <ul className="mt-8 space-y-4 text-sm">
-                <li className="flex gap-3">
-                  <svg className="mt-1 w-4 h-4 flex-shrink-0" style={{ color: 'rgba(90, 120, 99, 0.7)' }} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
-                  </svg>
-                  <div>
-                    <div className="font-medium text-[var(--text)]">Authorship record</div>
-                    <div className="text-[var(--muted)]">
-                      Timestamp, record ID, and core metadata tied to your submission.
+              <ul className="space-y-7">
+                {[
+                  {
+                    label: "Avalanche blockchain record",
+                    desc: "Your fingerprint is sealed on the Avalanche C-Chain. Tamper-proof and publicly verifiable on Snowtrace.",
+                    color: "var(--brand-plum)",
+                  },
+                  {
+                    label: "Digital fingerprint",
+                    desc: "A unique hash that proves integrity without exposing your content.",
+                    color: "var(--brand-ink-blue)",
+                  },
+                  {
+                    label: "Timestamped certificate",
+                    desc: "A downloadable proof document with all record metadata and verification instructions.",
+                    color: "var(--brand-ashen)",
+                  },
+                  {
+                    label: "Verification link",
+                    desc: "A shareable URL where anyone can confirm your record independently.",
+                    color: "var(--brand-plum)",
+                  },
+                ].map((item, i) => (
+                  <li
+                    key={item.label}
+                    className="dl-anim flex gap-4"
+                    style={{
+                      animation: `dl-fadeUp 0.5s ease-out ${0.3 + i * 0.1}s both`,
+                    }}
+                  >
+                    <div
+                      className="mt-1.5 w-1.5 h-1.5 rounded-full flex-shrink-0"
+                      style={{ background: item.color }}
+                    />
+                    <div>
+                      <div
+                        className="text-sm font-medium mb-1"
+                        style={{
+                          color: "#FFFFFF",
+                          fontFamily: "var(--font-body)",
+                        }}
+                      >
+                        {item.label}
+                      </div>
+                      <div
+                        className="text-sm leading-relaxed"
+                        style={{
+                          color: "rgba(255,255,255,0.35)",
+                          fontFamily: "var(--font-body)",
+                        }}
+                      >
+                        {item.desc}
+                      </div>
                     </div>
-                  </div>
-                </li>
-
-                <li className="flex gap-3">
-                  <svg className="mt-1 w-4 h-4 flex-shrink-0" style={{ color: 'rgba(90, 120, 99, 0.7)' }} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
-                  </svg>
-                  <div>
-                    <div className="font-medium text-[var(--text)]">Fingerprint</div>
-                    <div className="text-[var(--muted)]">
-                      A cryptographic hash that proves integrity without exposing your content.
-                    </div>
-                  </div>
-                </li>
-
-                <li className="flex gap-3">
-                  <svg className="mt-1 w-4 h-4 flex-shrink-0" style={{ color: 'rgba(90, 120, 99, 0.7)' }} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
-                  </svg>
-                  <div>
-                    <div className="font-medium text-[var(--text)]">Version trail</div>
-                    <div className="text-[var(--muted)]">
-                      Optional entries that show how a document evolved over time.
-                    </div>
-                  </div>
-                </li>
-
-                <li className="flex gap-3">
-                  <svg className="mt-1 w-4 h-4 flex-shrink-0" style={{ color: 'rgba(90, 120, 99, 0.7)' }} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
-                  </svg>
-                  <div>
-                    <div className="font-medium text-[var(--text)]">Sharing log</div>
-                    <div className="text-[var(--muted)]">
-                      Controlled access with view counts when sharing is needed.
-                    </div>
-                  </div>
-                </li>
+                  </li>
+                ))}
               </ul>
-
-              <p className="mt-10 text-xs text-[var(--muted)]">
-                DraftLock does not provide legal advice.
-              </p>
             </div>
           </div>
         </div>
       </section>
 
-      {/* How it works preview */}
-      <section id="how" className="py-24 border-t" style={{ borderColor: 'rgba(90, 120, 99, 0.25)' }}>
-        <div className="max-w-4xl mx-auto px-6">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-semibold text-[var(--headline)] mb-3">
-              One system for protecting creative work
+      {/* ═══════════════════════════════════════════════════════
+          SECTION 7 — TRUST
+          ═══════════════════════════════════════════════════════ */}
+      <section
+        className="py-28 md:py-40"
+        style={{ background: "var(--brand-light)" }}
+      >
+        <div className="max-w-6xl mx-auto px-6 md:px-12">
+          <div className="mb-16 md:mb-20 max-w-xl">
+            <h2
+              className="dl-anim text-3xl md:text-4xl lg:text-5xl tracking-tight mb-5"
+              style={{
+                fontFamily: "var(--font-display)",
+                color: "#0A0A0A",
+                animation: "dl-fadeUp 0.6s ease-out 0.1s both",
+              }}
+            >
+              Built on math, not trust.
             </h2>
-            <p className="text-[var(--muted)] leading-relaxed">
-              Draft documentation creates the authorship record. SendProof captures proof of submission. Copyright support turns both into organized materials that are easy to file and archive.
+            <p
+              className="dl-anim text-base leading-relaxed"
+              style={{
+                color: "rgba(10,10,10,0.4)",
+                fontFamily: "var(--font-body)",
+                animation: "dl-fadeUp 0.6s ease-out 0.2s both",
+              }}
+            >
+              Your proof doesn&apos;t depend on us. It depends on mathematics.
             </p>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-12 items-start">
-            <div>
-              <h3 className="text-xl font-medium text-[var(--headline)] mb-4">Draft documentation</h3>
-              <div className="space-y-3 text-sm text-[var(--muted)] leading-relaxed">
-                <div>• Timestamped authorship records</div>
-                <div>• Cryptographic fingerprints</div>
-                <div>• Version history with clear lineage</div>
-                <div>• Controlled sharing when needed</div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-0">
+            {[
+              {
+                title: "Digital fingerprinting",
+                desc: "SHA-256, the same security standard used by banks and governments worldwide.",
+              },
+              {
+                title: "Registered on Avalanche",
+                desc: "Your proof is written to the Avalanche C-Chain. Sub-second finality. Publicly verifiable on Snowtrace.",
+              },
+              {
+                title: "Independent verification",
+                desc: "Anyone can verify your proof, anytime, without an account or our involvement.",
+              },
+              {
+                title: "Privacy-preserving",
+                desc: "Only your file's cryptographic fingerprint goes on-chain. Your actual content stays private and secure.",
+              },
+            ].map((item, i) => (
+              <div
+                key={item.title}
+                className="dl-anim p-8 md:p-10"
+                style={{
+                  borderTop: "1px solid rgba(10,10,10,0.08)",
+                  borderRight: i % 2 === 0 ? "1px solid rgba(10,10,10,0.08)" : "none",
+                  animation: `dl-fadeUp 0.5s ease-out ${0.2 + i * 0.1}s both`,
+                }}
+              >
+                <h3
+                  className="text-base font-medium mb-2"
+                  style={{
+                    color: "#0A0A0A",
+                    fontFamily: "var(--font-body)",
+                  }}
+                >
+                  {item.title}
+                </h3>
+                <p
+                  className="text-sm leading-relaxed"
+                  style={{
+                    color: "rgba(10,10,10,0.45)",
+                    fontFamily: "var(--font-body)",
+                  }}
+                >
+                  {item.desc}
+                </p>
               </div>
-            </div>
-
-            <div>
-              <h3 className="text-xl font-medium text-[var(--headline)] mb-4">Proof of action</h3>
-              <div className="space-y-3 text-sm text-[var(--muted)] leading-relaxed">
-                <div>• Proof that something was sent or submitted</div>
-                <div>• Timestamped snapshots</div>
-                <div>• Permanent proof pages</div>
-                <div>• Clean, downloadable PDFs</div>
-              </div>
-            </div>
-
-            <div>
-              <h3 className="text-xl font-medium text-[var(--headline)] mb-4">Copyright support</h3>
-              <div className="space-y-3 text-sm text-[var(--muted)] leading-relaxed">
-                <div>• Guided worksheet for U.S. registration</div>
-                <div>• Plain-language prompts</div>
-                <div>• Organized records for future filing</div>
-                <div>• Optional WGA assistance</div>
-              </div>
-            </div>
+            ))}
           </div>
+        </div>
+      </section>
 
-          <div className="mt-12 text-center">
-            <a
-              href="/how"
-              className="inline-block px-6 py-3 rounded-md border text-sm font-medium text-[var(--text)] hover:border-[var(--structure)] hover:text-[var(--structure)] hover:bg-[var(--highlight)] transition-colors focus:outline-none focus:ring-2 focus:ring-[var(--focus-ring)] focus:ring-offset-2"
-              style={{ borderColor: 'rgba(90, 120, 99, 0.25)' }}
+      {/* ═══════════════════════════════════════════════════════
+          SECTION 8 — FINAL CTA
+          ═══════════════════════════════════════════════════════ */}
+      <section
+        className="relative overflow-hidden"
+        style={{ background: "var(--brand-dark)" }}
+      >
+        {/* Top gradient line */}
+        <div
+          className="absolute top-0 left-0 right-0 h-px dl-gradient-line"
+          style={{ opacity: 0.25 }}
+        />
+
+        {/* Atmospheric glow */}
+        <div
+          className="absolute pointer-events-none"
+          style={{
+            width: "700px",
+            height: "500px",
+            left: "50%",
+            top: "50%",
+            transform: "translate(-50%, -50%)",
+            background: "radial-gradient(ellipse at center, rgba(196,132,122,0.04) 0%, rgba(201,169,110,0.03) 40%, rgba(123,142,106,0.04) 70%, transparent 90%)",
+            filter: "blur(80px)",
+          }}
+        />
+
+        <div className="max-w-4xl mx-auto px-6 md:px-12 py-32 md:py-44 text-center relative z-10">
+          <h2
+            className="text-[2rem] sm:text-[2.5rem] md:text-[3.5rem] lg:text-[4rem] tracking-tight mb-8 leading-[1.05]"
+            style={{
+              fontFamily: "var(--font-display)",
+              color: "#FFFFFF",
+            }}
+          >
+            Your next draft
+            <br />
+            deserves a{" "}
+            <span className="dl-gradient-text" style={{ fontStyle: "italic" }}>
+              receipt.
+            </span>
+          </h2>
+          <p
+            className="text-base leading-relaxed mb-12 max-w-md mx-auto"
+            style={{
+              color: "rgba(255,255,255,0.35)",
+              fontFamily: "var(--font-body)",
+            }}
+          >
+            Create your first permanent proof in under 60 seconds. Free. No
+            credit card.
+          </p>
+          <Link
+            href="/protect"
+            className="dl-gradient-btn inline-flex items-center gap-2.5 px-8 py-4 rounded text-sm font-medium tracking-wide focus:outline-none focus:ring-2 focus:ring-[var(--brand-ink-blue)] focus:ring-offset-2 focus:ring-offset-[#0A0A0A]"
+            style={{
+              color: "#FFFFFF",
+              fontFamily: "var(--font-body)",
+            }}
+          >
+            <svg
+              width="15"
+              height="15"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
             >
-              Learn more
-            </a>
-          </div>
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+              <path d="M7 11V7a5 5 0 0110 0v4" />
+            </svg>
+            Lock Your First Draft
+          </Link>
         </div>
       </section>
     </main>

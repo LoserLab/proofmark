@@ -9,8 +9,18 @@ export const config = {
     serviceRoleKey: process.env.SUPABASE_SERVICE_ROLE_KEY!,
   },
   storage: {
-    bucket: process.env.STORAGE_BUCKET || 'draftlock',
+    bucket: process.env.STORAGE_BUCKET || 'proofmark',
     publicBaseUrl: process.env.STORAGE_PUBLIC_BASE_URL,
+  },
+  blockchain: {
+    rpcUrl: process.env.AVALANCHE_RPC_URL || 'https://api.avax-test.network/ext/bc/C/rpc',
+    chainId: parseInt(process.env.AVALANCHE_CHAIN_ID || '43113'),
+    relayerPrivateKey: process.env.RELAYER_PRIVATE_KEY || '',
+    registryAddress: process.env.PROOFMARK_REGISTRY_ADDRESS || '',
+    enabled: !!(process.env.RELAYER_PRIVATE_KEY && process.env.PROOFMARK_REGISTRY_ADDRESS),
+    explorerBaseUrl: process.env.AVALANCHE_CHAIN_ID === '43114'
+      ? 'https://snowtrace.io'
+      : 'https://testnet.snowtrace.io',
   },
 } as const
 

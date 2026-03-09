@@ -41,9 +41,9 @@ function bytesToSize(bytes: number) {
 }
 
 function fmtDate(s?: string | null) {
-  if (!s) return "—";
+  if (!s) return "N/A";
   const d = new Date(s);
-  if (Number.isNaN(d.getTime())) return "—";
+  if (Number.isNaN(d.getTime())) return "N/A";
   return d.toLocaleString();
 }
 
@@ -85,7 +85,7 @@ function StatusScreen({
       <div className="pointer-events-none absolute inset-x-0 top-0 h-64 bg-gradient-to-b from-white/5 to-transparent" />
       <section className="relative max-w-3xl mx-auto px-6 pt-24 pb-24">
         <div className="rounded-3xl border border-neutral-800 bg-neutral-900/25 p-10">
-          <div className="text-xs uppercase tracking-wide text-neutral-500">DraftLock</div>
+          <div className="text-xs uppercase tracking-wide text-neutral-500">ProofMark</div>
           <h1 className="mt-3 text-2xl font-semibold">{title}</h1>
           <p className="mt-3 text-sm text-neutral-400 leading-relaxed">{message}</p>
           <div className="mt-8 flex gap-3">
@@ -93,7 +93,7 @@ function StatusScreen({
               href="/"
               className="px-5 py-2 rounded-md border border-neutral-700 text-sm"
             >
-              Back to DraftLock
+              Back to ProofMark
             </a>
           </div>
         </div>
@@ -161,7 +161,7 @@ export default function ShareViewPage({ params }: { params: { token: string } })
   const viewerId = data?.viewerId || null;
 
   const viewModeLabel = useMemo(() => {
-    if (!data?.ok) return "—";
+    if (!data?.ok) return "N/A";
     if (allowDownload) return "View + download";
     return "View only";
   }, [data?.ok, allowDownload]);
@@ -190,7 +190,7 @@ export default function ShareViewPage({ params }: { params: { token: string } })
               href="/"
               className="px-5 py-2 rounded-md border border-neutral-700 text-sm"
             >
-              Back to DraftLock
+              Back to ProofMark
             </a>
           </div>
         </section>
@@ -214,7 +214,7 @@ export default function ShareViewPage({ params }: { params: { token: string } })
               href="/"
               className="px-5 py-2 rounded-md border border-neutral-700 text-sm"
             >
-              Back to DraftLock
+              Back to ProofMark
             </a>
           </div>
         </section>
@@ -237,7 +237,7 @@ export default function ShareViewPage({ params }: { params: { token: string } })
               href="/"
               className="px-5 py-2 rounded-md border border-neutral-700 text-sm"
             >
-              Back to DraftLock
+              Back to ProofMark
             </a>
           </div>
         </section>
@@ -260,7 +260,7 @@ export default function ShareViewPage({ params }: { params: { token: string } })
               href="/"
               className="px-5 py-2 rounded-md border border-neutral-700 text-sm"
             >
-              Back to DraftLock
+              Back to ProofMark
             </a>
           </div>
         </section>
@@ -278,8 +278,8 @@ export default function ShareViewPage({ params }: { params: { token: string } })
         <div className="absolute inset-0 flex items-center justify-center">
           <div className="text-[10px] md:text-xs font-medium tracking-[0.35em] uppercase text-white select-none rotate-[-24deg]">
             {viewerId
-              ? `DraftLock • Shared View • Viewer ID: ${viewerId} • DraftLock • Shared View • Viewer ID: ${viewerId}`
-              : "DraftLock • Shared View • DraftLock • Shared View • DraftLock • Shared View"}
+              ? `ProofMark • Shared View • Viewer ID: ${viewerId} • ProofMark • Shared View • Viewer ID: ${viewerId}`
+              : "ProofMark • Shared View • ProofMark • Shared View • ProofMark • Shared View"}
           </div>
         </div>
       </div>
@@ -287,7 +287,7 @@ export default function ShareViewPage({ params }: { params: { token: string } })
       <section className="relative max-w-6xl mx-auto px-6 pt-14 pb-10">
         <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4">
           <div>
-            <div className="text-xs uppercase tracking-wide text-neutral-400">DraftLock</div>
+            <div className="text-xs uppercase tracking-wide text-neutral-400">ProofMark</div>
             <h1 className="mt-2 text-2xl md:text-3xl font-semibold leading-tight">
               {title}
             </h1>
@@ -319,7 +319,7 @@ export default function ShareViewPage({ params }: { params: { token: string } })
               href="/"
               className="px-5 py-2 rounded-md border border-neutral-700 text-sm"
             >
-              DraftLock
+              ProofMark
             </a>
           </div>
         </div>
@@ -355,7 +355,7 @@ export default function ShareViewPage({ params }: { params: { token: string } })
                   </div>
                 )}
                 <div className="text-xs text-neutral-500 leading-relaxed mt-4">
-                  DraftLock is not a law firm and does not provide legal advice.
+                  ProofMark is not a law firm and does not provide legal advice.
                 </div>
               </div>
             </Panel>
@@ -375,7 +375,7 @@ export default function ShareViewPage({ params }: { params: { token: string } })
                 <div className="rounded-xl border border-neutral-800 bg-neutral-950/30 p-4">
                   <div className="text-xs text-neutral-500">Size</div>
                   <div className="mt-1 text-sm text-neutral-200 font-medium">
-                    {sizeBytes ? bytesToSize(sizeBytes) : "—"}
+                    {sizeBytes ? bytesToSize(sizeBytes) : "N/A"}
                   </div>
                 </div>
 

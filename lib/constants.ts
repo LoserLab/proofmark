@@ -1,4 +1,4 @@
-export const PRODUCT_NAME = "DraftLock";
+export const PRODUCT_NAME = "ProofMark";
 
 export const SUPPORTED_MEDIA_DESCRIPTION =
-  "DraftLock supports drafts of many kinds, including writing, scripts, manuscripts, research, design documents, and creative work.";
+  "ProofMark supports drafts of many kinds, including writing, scripts, manuscripts, research, design documents, and creative work.";

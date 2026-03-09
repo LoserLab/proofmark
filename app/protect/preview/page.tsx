@@ -55,7 +55,7 @@ function ProtectPreviewContent() {
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <div>
             <div className="text-xs uppercase tracking-wide text-neutral-400">
-              DraftLock
+              ProofMark
             </div>
             <h1 className="mt-2 text-2xl md:text-3xl font-semibold">
               Evidence Pack Preview
@@ -98,7 +98,7 @@ function ProtectPreviewContent() {
           <div className="rounded-3xl border border-neutral-800 bg-neutral-900/30 p-10 text-sm text-neutral-400">
             Preview data not found in this session.
             <div className="mt-3 text-xs text-neutral-500">
-              Open this preview from the Protect flow so DraftLock can load the preview payload.
+              Open this preview from the Protect flow so ProofMark can load the preview payload.
             </div>
           </div>
         )}

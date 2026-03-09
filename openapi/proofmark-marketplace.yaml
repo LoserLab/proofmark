@@ -1,0 +1,980 @@
+openapi: "3.0.0"
+info:
+  title: ProofMark API
+  version: "1.0.0"
+  description: |
+    Proof of creation, sealed forever. ProofMark creates timestamped,
+    cryptographically signed evidence of authorship for screenplays,
+    manuscripts, and creative works. Protect drafts, generate evidence
+    packets, verify hashes, and share work with tracked links.
+
+    ## Authentication
+    All authenticated endpoints require a ProofMark API key passed
+    via the `X-ProofMark-Key` header. Payment is handled automatically
+    via x402 protocol by the Mirra platform.
+
+    ## Mirra Context Headers
+    The platform injects `x-mirra-user-id` and `x-mirra-session-id`
+    headers on every call. ProofMark uses these to map Mirra users
+    to ProofMark accounts (auto-provisioned on first call).
+  contact:
+    name: ProofMark
+    url: https://proofmark.xyz
+  license:
+    name: Proprietary
+
+servers:
+  - url: https://api.proofmark.xyz/v1
+    description: Production
+
+paths:
+  # ─────────────────────────────────────────────
+  #  PROTECT — single-step file protection
+  # ─────────────────────────────────────────────
+  /protect:
+    post:
+      operationId: protectWork
+      summary: Protect a creative work
+      description: |
+        One-shot endpoint that registers a creative work with ProofMark.
+        Accepts file content (base64-encoded), computes SHA-256 hash,
+        generates a timestamped receipt, and optionally registers on
+        Avalanche C-Chain. Returns the hash, receipt, and version ID
+        for subsequent operations (evidence packet, share, etc.).
+
+        This combines the internal create → upload → commit flow into
+        a single marketplace-friendly call.
+      tags:
+        - Protection
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ProtectRequest"
+            example:
+              title: "UNTITLED NOIR PILOT"
+              workType: "screenplay"
+              fileBase64: "JVBERi0xLjQKMS..."
+              filename: "noir-pilot-v3.pdf"
+              mimeType: "application/pdf"
+              notes: "Third draft, added cold open"
+              blockchain: true
+      responses:
+        "200":
+          description: Work protected successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProtectResponse"
+        "400":
+          description: Invalid request (missing fields, unsupported file type, file too large)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "402":
+          description: Payment required (x402)
+        "500":
+          description: Internal error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  # ─────────────────────────────────────────────
+  #  PROTECT NEW VERSION — add revision to existing script
+  # ─────────────────────────────────────────────
+  /protect/{scriptId}/version:
+    post:
+      operationId: protectVersion
+      summary: Protect a new version of an existing work
+      description: |
+        Uploads and commits a new version (revision) of a previously
+        protected script. The system tracks version lineage and can
+        detect whether the new upload is a revision of the prior version.
+      tags:
+        - Protection
+      parameters:
+        - $ref: "#/components/parameters/scriptId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ProtectVersionRequest"
+            example:
+              fileBase64: "JVBERi0xLjQKMS..."
+              filename: "noir-pilot-v4.pdf"
+              mimeType: "application/pdf"
+              notes: "Revised act two per manager notes"
+              blockchain: true
+      responses:
+        "200":
+          description: New version protected
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProtectResponse"
+        "400":
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "402":
+          description: Payment required (x402)
+        "404":
+          description: Script not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  # ─────────────────────────────────────────────
+  #  LIST — user's protected works
+  # ─────────────────────────────────────────────
+  /scripts:
+    get:
+      operationId: listScripts
+      summary: List protected works
+      description: |
+        Returns all scripts protected by the calling user, sorted by
+        most recently updated. Includes latest version metadata for
+        each script.
+      tags:
+        - Scripts
+      parameters:
+        - name: workType
+          in: query
+          description: Filter by work type
+          schema:
+            $ref: "#/components/schemas/WorkType"
+        - name: limit
+          in: query
+          description: Max results (default 50, max 100)
+          schema:
+            type: integer
+            default: 50
+            maximum: 100
+        - name: offset
+          in: query
+          description: Pagination offset
+          schema:
+            type: integer
+            default: 0
+      responses:
+        "200":
+          description: List of protected scripts
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ScriptList"
+        "402":
+          description: Payment required (x402)
+
+  # ─────────────────────────────────────────────
+  #  GET SCRIPT — single script details
+  # ─────────────────────────────────────────────
+  /scripts/{scriptId}:
+    get:
+      operationId: getScript
+      summary: Get script details
+      description: |
+        Returns full metadata for a protected script including all
+        versions, blockchain status, and audit history.
+      tags:
+        - Scripts
+      parameters:
+        - $ref: "#/components/parameters/scriptId"
+      responses:
+        "200":
+          description: Script details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ScriptDetail"
+        "402":
+          description: Payment required (x402)
+        "404":
+          description: Script not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  # ─────────────────────────────────────────────
+  #  EVIDENCE PACKET — downloadable proof ZIP
+  # ─────────────────────────────────────────────
+  /scripts/{scriptId}/packet:
+    get:
+      operationId: getEvidencePacket
+      summary: Generate evidence packet
+      description: |
+        Returns a ZIP archive containing the complete evidence packet
+        for a committed version: original file, SHA-256 receipt,
+        metadata summary, USCO filing worksheet, audit log, and
+        ProofMark certificate PDF.
+      tags:
+        - Evidence
+      parameters:
+        - $ref: "#/components/parameters/scriptId"
+        - name: versionId
+          in: query
+          description: Specific version ID. Defaults to latest committed version.
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: Evidence packet ZIP
+          content:
+            application/zip:
+              schema:
+                type: string
+                format: binary
+        "400":
+          description: Version not committed
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "402":
+          description: Payment required (x402)
+        "404":
+          description: Script or version not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  # ─────────────────────────────────────────────
+  #  CERTIFICATE — standalone PDF certificate
+  # ─────────────────────────────────────────────
+  /scripts/{scriptId}/certificate:
+    get:
+      operationId: getCertificate
+      summary: Generate protection certificate
+      description: |
+        Returns a standalone PDF certificate for a committed version.
+        Contains script title, SHA-256 fingerprint, timestamp, and
+        blockchain transaction proof (if registered).
+      tags:
+        - Evidence
+      parameters:
+        - $ref: "#/components/parameters/scriptId"
+        - name: versionId
+          in: query
+          description: Specific version ID. Defaults to latest committed version.
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: Certificate PDF
+          content:
+            application/pdf:
+              schema:
+                type: string
+                format: binary
+        "402":
+          description: Payment required (x402)
+        "404":
+          description: Script or version not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  # ─────────────────────────────────────────────
+  #  SHARE — create tracked share link
+  # ─────────────────────────────────────────────
+  /scripts/{scriptId}/share:
+    post:
+      operationId: createShareLink
+      summary: Create a tracked share link
+      description: |
+        Generates a unique, trackable share link for a protected script.
+        The link records first-view timestamp and view count. Optionally
+        set expiration and download permissions.
+      tags:
+        - Sharing
+      parameters:
+        - $ref: "#/components/parameters/scriptId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ShareRequest"
+            example:
+              versionId: "a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+              viewerLabel: "Agent — CAA"
+              expiresInDays: 30
+              allowDownload: true
+      responses:
+        "200":
+          description: Share link created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ShareResponse"
+        "402":
+          description: Payment required (x402)
+        "404":
+          description: Script or version not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  # ─────────────────────────────────────────────
+  #  SHARE STATUS — check share link analytics
+  # ─────────────────────────────────────────────
+  /share/{token}/status:
+    get:
+      operationId: getShareStatus
+      summary: Check share link status
+      description: |
+        Returns the current status and view analytics for a share link:
+        whether it's been viewed, view count, first view timestamp,
+        and whether it's expired or revoked.
+      tags:
+        - Sharing
+      parameters:
+        - name: token
+          in: path
+          required: true
+          description: The 20-character share link token
+          schema:
+            type: string
+            minLength: 20
+            maxLength: 20
+      responses:
+        "200":
+          description: Share link status
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ShareStatus"
+        "402":
+          description: Payment required (x402)
+        "404":
+          description: Share link not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  # ─────────────────────────────────────────────
+  #  VERIFY — public hash verification (no auth)
+  # ─────────────────────────────────────────────
+  /verify/{hash}:
+    get:
+      operationId: verifyHash
+      summary: Verify a SHA-256 hash
+      description: |
+        Public endpoint. Checks whether a SHA-256 hash has been
+        registered with ProofMark. Returns timestamp, work metadata,
+        and blockchain proof if available. No authentication required.
+      tags:
+        - Verification
+      parameters:
+        - name: hash
+          in: path
+          required: true
+          description: 64-character hexadecimal SHA-256 hash
+          schema:
+            type: string
+            pattern: "^[a-fA-F0-9]{64}$"
+      responses:
+        "200":
+          description: Hash found — returns registration details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/VerifyFoundResponse"
+        "404":
+          description: Hash not found in ProofMark registry
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/VerifyNotFoundResponse"
+        "400":
+          description: Invalid hash format
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  # ─────────────────────────────────────────────
+  #  BADGE — embeddable SVG verification badge
+  # ─────────────────────────────────────────────
+  /badge/{hash}:
+    get:
+      operationId: getBadge
+      summary: Get verification badge
+      description: |
+        Returns an SVG badge image showing the verification status
+        of a hash. Embeddable in websites, portfolios, and documents.
+        States: verified (green), pending (orange), recorded (dark),
+        not found (gray).
+      tags:
+        - Verification
+      parameters:
+        - name: hash
+          in: path
+          required: true
+          description: 64-character hexadecimal SHA-256 hash
+          schema:
+            type: string
+            pattern: "^[a-fA-F0-9]{64}$"
+      responses:
+        "200":
+          description: SVG badge image
+          content:
+            image/svg+xml:
+              schema:
+                type: string
+
+  # ─────────────────────────────────────────────
+  #  AUDIT LOG — history of actions on a script
+  # ─────────────────────────────────────────────
+  /scripts/{scriptId}/audit:
+    get:
+      operationId: getAuditLog
+      summary: Get audit log
+      description: |
+        Returns the append-only audit trail for a script. Every
+        action — upload, commit, share, view, packet generation —
+        is logged with timestamps and metadata.
+      tags:
+        - Scripts
+      parameters:
+        - $ref: "#/components/parameters/scriptId"
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 50
+            maximum: 200
+        - name: offset
+          in: query
+          schema:
+            type: integer
+            default: 0
+      responses:
+        "200":
+          description: Audit log entries
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuditLog"
+        "402":
+          description: Payment required (x402)
+        "404":
+          description: Script not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+# ═══════════════════════════════════════════════
+#  COMPONENTS
+# ═══════════════════════════════════════════════
+components:
+
+  # ── Parameters ──────────────────────────────
+  parameters:
+    scriptId:
+      name: scriptId
+      in: path
+      required: true
+      description: UUID of the protected script
+      schema:
+        type: string
+        format: uuid
+
+  # ── Schemas ─────────────────────────────────
+  schemas:
+
+    # ── Enums ──
+    WorkType:
+      type: string
+      enum:
+        - screenplay
+        - manuscript
+        - treatment
+        - pitch_deck
+        - research
+        - other
+      description: The type of creative work
+
+    ChainStatus:
+      type: string
+      enum:
+        - pending
+        - confirmed
+        - failed
+        - null
+      description: Blockchain registration status
+
+    ShareLinkStatus:
+      type: string
+      enum:
+        - active
+        - revoked
+        - expired
+
+    # ── Request Bodies ──
+    ProtectRequest:
+      type: object
+      required:
+        - title
+        - workType
+        - fileBase64
+        - filename
+        - mimeType
+      properties:
+        title:
+          type: string
+          description: Title of the work
+          example: "UNTITLED NOIR PILOT"
+        workType:
+          $ref: "#/components/schemas/WorkType"
+        fileBase64:
+          type: string
+          format: byte
+          description: Base64-encoded file content (max 100MB decoded)
+        filename:
+          type: string
+          description: Original filename with extension
+          example: "noir-pilot-v3.pdf"
+        mimeType:
+          type: string
+          enum:
+            - application/pdf
+            - application/msword
+            - application/vnd.openxmlformats-officedocument.wordprocessingml.document
+            - text/plain
+          description: File MIME type
+        notes:
+          type: string
+          description: Optional notes about this version
+        authorsCount:
+          type: integer
+          description: Number of authors
+          default: 1
+        publicationStatus:
+          type: string
+          description: Publication status of the work
+        workMadeForHire:
+          type: string
+          description: Whether this is a work made for hire
+        preexistingMaterial:
+          type: string
+          description: Whether this contains preexisting material
+        blockchain:
+          type: boolean
+          description: Register hash on Avalanche C-Chain
+          default: false
+
+    ProtectVersionRequest:
+      type: object
+      required:
+        - fileBase64
+        - filename
+        - mimeType
+      properties:
+        fileBase64:
+          type: string
+          format: byte
+          description: Base64-encoded file content
+        filename:
+          type: string
+          description: Original filename
+        mimeType:
+          type: string
+          enum:
+            - application/pdf
+            - application/msword
+            - application/vnd.openxmlformats-officedocument.wordprocessingml.document
+            - text/plain
+        notes:
+          type: string
+          description: Notes about this revision
+        blockchain:
+          type: boolean
+          default: false
+
+    ShareRequest:
+      type: object
+      required:
+        - versionId
+      properties:
+        versionId:
+          type: string
+          format: uuid
+          description: Version to share
+        viewerLabel:
+          type: string
+          description: Label for the recipient (e.g. "Agent — CAA", "Lawyer")
+        expiresInDays:
+          type: integer
+          description: Days until link expires. Omit for no expiration.
+          minimum: 1
+          maximum: 365
+        allowDownload:
+          type: boolean
+          description: Whether the viewer can download a watermarked copy
+          default: true
+
+    # ── Response Bodies ──
+    ProtectResponse:
+      type: object
+      properties:
+        scriptId:
+          type: string
+          format: uuid
+        versionId:
+          type: string
+          format: uuid
+        sha256:
+          type: string
+          description: 64-character hex SHA-256 fingerprint
+          example: "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        committedAt:
+          type: string
+          format: date-time
+          description: ISO 8601 timestamp of commitment
+        receiptText:
+          type: string
+          description: Human-readable authorship receipt
+        chainStatus:
+          $ref: "#/components/schemas/ChainStatus"
+        badgeUrl:
+          type: string
+          format: uri
+          description: URL for the embeddable verification badge
+          example: "https://api.proofmark.xyz/v1/badge/e3b0c442..."
+        verifyUrl:
+          type: string
+          format: uri
+          description: Public verification page URL
+          example: "https://proofmark.xyz/verify/e3b0c442..."
+
+    ScriptSummary:
+      type: object
+      properties:
+        scriptId:
+          type: string
+          format: uuid
+        title:
+          type: string
+        workType:
+          $ref: "#/components/schemas/WorkType"
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+        latestVersion:
+          type: object
+          properties:
+            versionId:
+              type: string
+              format: uuid
+            versionNumber:
+              type: integer
+            sha256:
+              type: string
+            committedAt:
+              type: string
+              format: date-time
+            chainStatus:
+              $ref: "#/components/schemas/ChainStatus"
+            byteSize:
+              type: integer
+            pageCount:
+              type: integer
+              nullable: true
+
+    ScriptList:
+      type: object
+      properties:
+        scripts:
+          type: array
+          items:
+            $ref: "#/components/schemas/ScriptSummary"
+        total:
+          type: integer
+        limit:
+          type: integer
+        offset:
+          type: integer
+
+    ScriptDetail:
+      type: object
+      properties:
+        scriptId:
+          type: string
+          format: uuid
+        title:
+          type: string
+        workType:
+          $ref: "#/components/schemas/WorkType"
+        notes:
+          type: string
+          nullable: true
+        authorsCount:
+          type: integer
+        publicationStatus:
+          type: string
+          nullable: true
+        workMadeForHire:
+          type: string
+          nullable: true
+        preexistingMaterial:
+          type: string
+          nullable: true
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+        versions:
+          type: array
+          items:
+            $ref: "#/components/schemas/VersionDetail"
+        shareLinks:
+          type: array
+          items:
+            $ref: "#/components/schemas/ShareStatus"
+
+    VersionDetail:
+      type: object
+      properties:
+        versionId:
+          type: string
+          format: uuid
+        versionNumber:
+          type: integer
+        sha256:
+          type: string
+          nullable: true
+        committedAt:
+          type: string
+          format: date-time
+          nullable: true
+        status:
+          type: string
+          enum:
+            - uploading
+            - committed
+        filename:
+          type: string
+        byteSize:
+          type: integer
+          nullable: true
+        pageCount:
+          type: integer
+          nullable: true
+        chainStatus:
+          $ref: "#/components/schemas/ChainStatus"
+        txHash:
+          type: string
+          nullable: true
+          description: Avalanche transaction hash
+        blockNumber:
+          type: integer
+          nullable: true
+        explorerUrl:
+          type: string
+          format: uri
+          nullable: true
+          description: Snowtrace explorer link
+        detectedAsRevisionOf:
+          type: string
+          format: uuid
+          nullable: true
+          description: Version ID this was detected as a revision of
+
+    ShareResponse:
+      type: object
+      properties:
+        token:
+          type: string
+          description: 20-character share token
+        shareUrl:
+          type: string
+          format: uri
+          description: Full shareable URL
+          example: "https://proofmark.xyz/s/abc123..."
+
+    ShareStatus:
+      type: object
+      properties:
+        token:
+          type: string
+        status:
+          $ref: "#/components/schemas/ShareLinkStatus"
+        viewerLabel:
+          type: string
+          nullable: true
+        allowDownload:
+          type: boolean
+        createdAt:
+          type: string
+          format: date-time
+        expiresAt:
+          type: string
+          format: date-time
+          nullable: true
+        firstViewedAt:
+          type: string
+          format: date-time
+          nullable: true
+        viewCount:
+          type: integer
+
+    VerifyFoundResponse:
+      type: object
+      properties:
+        found:
+          type: boolean
+          example: true
+        sha256:
+          type: string
+        committedAt:
+          type: string
+          format: date-time
+        title:
+          type: string
+          nullable: true
+        workType:
+          type: string
+          nullable: true
+        filename:
+          type: string
+        byteSize:
+          type: integer
+          nullable: true
+        pageCount:
+          type: integer
+          nullable: true
+        txHash:
+          type: string
+          nullable: true
+        blockNumber:
+          type: integer
+          nullable: true
+        chainStatus:
+          type: string
+          nullable: true
+        chainRegisteredAt:
+          type: string
+          format: date-time
+          nullable: true
+        explorerUrl:
+          type: string
+          format: uri
+          nullable: true
+
+    VerifyNotFoundResponse:
+      type: object
+      properties:
+        found:
+          type: boolean
+          example: false
+        sha256:
+          type: string
+
+    AuditLogEntry:
+      type: object
+      properties:
+        action:
+          type: string
+          description: Action type
+          enum:
+            - upload_started
+            - committed
+            - packet_generated
+            - certificate_generated
+            - snapshot_generated
+            - share_created
+            - share_viewed
+            - dismiss_reminder
+        createdAt:
+          type: string
+          format: date-time
+        metadata:
+          type: object
+          description: Action-specific context (varies by action type)
+          additionalProperties: true
+
+    AuditLog:
+      type: object
+      properties:
+        entries:
+          type: array
+          items:
+            $ref: "#/components/schemas/AuditLogEntry"
+        total:
+          type: integer
+        limit:
+          type: integer
+        offset:
+          type: integer
+
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
+          description: Human-readable error message
+        code:
+          type: string
+          description: Machine-readable error code
+          enum:
+            - invalid_request
+            - unauthorized
+            - not_found
+            - file_too_large
+            - unsupported_file_type
+            - version_not_committed
+            - internal_error
+
+  # ── Security ────────────────────────────────
+  securitySchemes:
+    x402:
+      type: apiKey
+      in: header
+      name: X-PAYMENT-RESPONSE
+      description: |
+        x402 payment proof. Handled automatically by the Mirra
+        platform — resource developers do not need to manage this.
+    proofmarkApiKey:
+      type: apiKey
+      in: header
+      name: X-ProofMark-Key
+      description: |
+        ProofMark API key. Auto-provisioned when a Mirra user
+        first enables the ProofMark resource.
+
+security:
+  - x402: []
+  - proofmarkApiKey: []
+
+tags:
+  - name: Protection
+    description: Protect creative works with timestamped, cryptographic proof
+  - name: Scripts
+    description: Manage and inspect protected works
+  - name: Evidence
+    description: Generate evidence packets and certificates
+  - name: Sharing
+    description: Create and track share links
+  - name: Verification
+    description: Public hash verification and embeddable badges

@@ -26,7 +26,7 @@ export default function EvidencePacketPreview({ size = "default" }: { size?: "de
         {/* Document header - minimal, archival */}
         <div className="mb-5 pb-3 border-b border-[var(--stroke)]">
           <div className="text-[11px] uppercase tracking-wider text-[var(--warm)] font-medium">
-            DraftLock Evidence Record
+            ProofMark Evidence Record
           </div>
           <div className="text-[9px] text-[var(--muted)] mt-1.5">
             Generated {new Date().toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
@@ -64,8 +64,8 @@ export default function EvidencePacketPreview({ size = "default" }: { size?: "de
               Version trail
             </div>
             <div className="text-[10px] text-[var(--muted)] space-y-0.5 leading-relaxed">
-              <div>• Version 1.0 — Initial draft</div>
-              <div className="opacity-70">• Version 1.1 — Revised</div>
+              <div>• Version 1.0: Initial draft</div>
+              <div className="opacity-70">• Version 1.1: Revised</div>
             </div>
           </div>
 
@@ -83,7 +83,7 @@ export default function EvidencePacketPreview({ size = "default" }: { size?: "de
 
         {/* Footer line - minimal */}
         <div className="mt-5 pt-3 border-t border-[var(--stroke)] text-[9px] text-[var(--muted)] text-center leading-relaxed">
-          DraftLock is not a law firm and does not provide legal advice.
+          ProofMark is not a law firm and does not provide legal advice.
         </div>
       </div>
 

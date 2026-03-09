@@ -109,7 +109,7 @@ function ShareCreateContent() {
       <section className="relative max-w-6xl mx-auto px-6 pt-16 pb-10">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <div>
-            <div className="text-xs uppercase tracking-wide text-neutral-400">DraftLock</div>
+            <div className="text-xs uppercase tracking-wide text-neutral-400">ProofMark</div>
             <h1 className="mt-2 text-2xl md:text-3xl font-semibold">Create share link</h1>
             <p className="mt-2 text-sm text-neutral-400 max-w-2xl">
               Generate a controlled share link for this version. Links are token-based and can be
@@ -133,7 +133,7 @@ function ShareCreateContent() {
           <div className="rounded-3xl border border-neutral-800 bg-neutral-900/30 p-10 text-sm text-neutral-400">
             Share context not found in this session.
             <div className="mt-3 text-xs text-neutral-500">
-              Open this page from the Protect flow so DraftLock can load the correct draft version.
+              Open this page from the Protect flow so ProofMark can load the correct draft version.
             </div>
           </div>
         ) : (
@@ -283,7 +283,7 @@ function ShareCreateContent() {
                 <div className="rounded-2xl border border-neutral-800 bg-neutral-950/20 p-6">
                   <div className="text-sm font-medium">Note</div>
                   <div className="mt-2 text-sm text-neutral-400 leading-relaxed">
-                    DraftLock is not a law firm and does not provide legal advice.
+                    ProofMark is not a law firm and does not provide legal advice.
                   </div>
                 </div>
               </div>

@@ -6,14 +6,14 @@ export default function PrivacyPage() {
 
         <div className="mt-8 space-y-8 text-sm text-[var(--muted)] leading-relaxed">
           <p>
-            DraftLock respects your privacy. This policy explains what information we
+            ProofMark respects your privacy. This policy explains what information we
             collect and how it is used.
           </p>
 
           <section>
             <h2 className="text-[var(--text)] font-medium">Information you provide</h2>
             <p className="mt-2">
-              We collect information you choose to provide when using DraftLock, such as
+              We collect information you choose to provide when using ProofMark, such as
               uploaded files, metadata, and account-related details.
             </p>
           </section>
@@ -22,7 +22,7 @@ export default function PrivacyPage() {
             <h2 className="text-[var(--text)] font-medium">How information is used</h2>
             <p className="mt-2">
               Information is used to operate the service, generate records, and improve
-              reliability. DraftLock does not sell personal data.
+              reliability. ProofMark does not sell personal data.
             </p>
           </section>
 
@@ -37,7 +37,7 @@ export default function PrivacyPage() {
           <section>
             <h2 className="text-[var(--text)] font-medium">Data storage</h2>
             <p className="mt-2">
-              DraftLock uses secure storage providers to store files and metadata. Access
+              ProofMark uses secure storage providers to store files and metadata. Access
               controls are applied to limit exposure.
             </p>
           </section>
@@ -58,7 +58,7 @@ export default function PrivacyPage() {
           </section>
 
           <p className="text-xs text-[var(--muted)]">
-            If you have questions about privacy, contact DraftLock support.
+            If you have questions about privacy, contact ProofMark support.
           </p>
         </div>
       </section>

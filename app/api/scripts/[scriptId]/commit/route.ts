@@ -4,6 +4,8 @@ import { createClient } from "@/lib/supabase/server";
 import { sha256Hex } from "@/lib/crypto";
 import { buildReceiptText } from "@/lib/receipt";
 import { config } from "@/lib/config";
+import { registerHashOnChain } from "@/lib/blockchain/register";
+import { isBlockchainEnabled } from "@/lib/blockchain/client";
 
 export async function POST(req: Request) {
   // Authenticate user from session
@@ -49,7 +51,7 @@ export async function POST(req: Request) {
 
   const { data: script, error: sErr } = await supabase
     .from("scripts")
-    .select("title")
+    .select("title, work_type")
     .eq("id", scriptId)
     .eq("user_id", userId)
     .single();
@@ -59,9 +61,16 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Script not found" }, { status: 404 });
   }
 
+  const chainEnabled = isBlockchainEnabled();
+
   await supabase
     .from("script_versions")
-    .update({ sha256: sha, committed_at: committedAt, status: "committed" })
+    .update({
+      sha256: sha,
+      committed_at: committedAt,
+      status: "committed",
+      ...(chainEnabled ? { chain_status: "pending" } : {}),
+    })
     .eq("id", versionId)
     .eq("user_id", userId);
 
@@ -73,6 +82,39 @@ export async function POST(req: Request) {
     metadata: { sha256: sha, committedAt },
   });
 
+  // Fire-and-forget blockchain registration (non-blocking)
+  if (chainEnabled) {
+    const workType = script.work_type || "other";
+    registerHashOnChain(sha, versionId, workType)
+      .then(async (result) => {
+        if (result.success && result.txHash) {
+          await supabase
+            .from("script_versions")
+            .update({
+              tx_hash: result.txHash,
+              block_number: result.blockNumber,
+              chain_status: "confirmed",
+              chain_registered_at: new Date().toISOString(),
+            })
+            .eq("id", versionId);
+          console.log(`[blockchain] Registered version ${versionId} on-chain: ${result.txHash}`);
+        } else if (!result.success) {
+          await supabase
+            .from("script_versions")
+            .update({ chain_status: "failed" })
+            .eq("id", versionId);
+          console.error(`[blockchain] Failed for version ${versionId}:`, result.error);
+        }
+      })
+      .catch(async (err) => {
+        await supabase
+          .from("script_versions")
+          .update({ chain_status: "failed" })
+          .eq("id", versionId);
+        console.error(`[blockchain] Unexpected error for version ${versionId}:`, err);
+      });
+  }
+
   const receipt = buildReceiptText({
     title: script.title ?? "Untitled screenplay",
     draftId: scriptId,
@@ -83,5 +125,10 @@ export async function POST(req: Request) {
     timestampUtc: committedAt,
   });
 
-  return NextResponse.json({ sha256: sha, committedAt, receiptText: receipt });
+  return NextResponse.json({
+    sha256: sha,
+    committedAt,
+    receiptText: receipt,
+    chainStatus: chainEnabled ? "pending" : null,
+  });
 }

@@ -86,7 +86,7 @@ export async function GET(
     return new NextResponse(pdfBuffer as any, {
       headers: {
         "Content-Type": "application/pdf",
-        "Content-Disposition": `inline; filename="DraftLock_Snapshot_${scriptId}_${versionId}.pdf"`,
+        "Content-Disposition": `inline; filename="ProofMark_Snapshot_${scriptId}_${versionId}.pdf"`,
         "Cache-Control": "private, no-cache, no-store, must-revalidate",
       },
     });

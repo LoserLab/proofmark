@@ -1,5 +1,5 @@
 {
-  "name": "draftlock",
+  "name": "proofmark",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -339,6 +339,7 @@
     "update-browserslist-db": "^1.2.3",
     "uri-js": "^4.4.1",
     "util-deprecate": "^1.0.2",
+    "viem": "^2.45.1",
     "which": "^2.0.2",
     "which-boxed-primitive": "^1.1.1",
     "which-builtin-type": "^1.2.1",

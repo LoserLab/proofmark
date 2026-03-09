@@ -27,7 +27,7 @@ export function buildReceiptText(input: {
   committedAtISO: string;
 }) {
   return [
-    "DRAFTLOCK AUTHORSHIP RECEIPT",
+    "PROOFMARK AUTHORSHIP RECEIPT",
     "",
     `Title: ${input.scriptTitle}`,
     `Script ID: ${input.scriptId}`,

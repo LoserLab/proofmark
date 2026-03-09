@@ -44,7 +44,7 @@ function Section({
 function fakeHash(seed: string) {
   // Deterministic-looking placeholder hash for preview only.
   // Do NOT use for security. Real hash should come from server output.
-  const base = (seed || "draftlock").replace(/\s+/g, "").toLowerCase();
+  const base = (seed || "proofmark").replace(/\s+/g, "").toLowerCase();
   const pad = (base + "evidencepack").repeat(8).slice(0, 64);
   return pad.replace(/[^a-f0-9]/g, "a").padEnd(64, "a");
 }
@@ -82,7 +82,7 @@ export default function EvidencePackPreview(props: {
             {props.title || "Untitled draft"}
           </div>
           <div className="mt-2 text-sm text-[var(--muted)]">
-            {props.workType || "Work"} • DraftLock Evidence Record
+            {props.workType || "Work"} • ProofMark Evidence Record
           </div>
         </div>
 
@@ -100,9 +100,9 @@ export default function EvidencePackPreview(props: {
           <Section title="Record summary" subtitle="Neutral metadata">
             <div className="grid sm:grid-cols-2 gap-3">
               <Block label="Evidence ID" value={evidenceId} />
-              <Block label="Work type" value={props.workType || "—"} />
-              <Block label="Filename" value={props.filename || "—"} />
-              <Block label="File size" value={props.fileSizeLabel || "—"} />
+              <Block label="Work type" value={props.workType || "N/A"} />
+              <Block label="Filename" value={props.filename || "N/A"} />
+              <Block label="File size" value={props.fileSizeLabel || "N/A"} />
               <Block
                 label="Script record"
                 value={props.scriptId ? props.scriptId : "Assigned at upload"}
@@ -181,9 +181,9 @@ export default function EvidencePackPreview(props: {
 
               <div className="mt-4 grid sm:grid-cols-2 gap-3">
                 <Block label="Share token" value="Not created" />
-                <Block label="Views" value="—" />
-                <Block label="First viewed" value="—" />
-                <Block label="Expires" value="—" />
+                <Block label="Views" value="N/A" />
+                <Block label="First viewed" value="N/A" />
+                <Block label="Expires" value="N/A" />
               </div>
             </div>
           </Section>
@@ -191,11 +191,11 @@ export default function EvidencePackPreview(props: {
           <Section title="Registration support notes" subtitle="Guidance, not advice">
             <div className="text-xs text-[var(--muted)] leading-relaxed space-y-2">
               <div>
-                DraftLock can organize information that may help with U.S. copyright registration,
+                ProofMark can organize information that may help with U.S. copyright registration,
                 such as title, dates, and deposit copy references.
               </div>
               <div>
-                DraftLock is not a law firm and does not provide legal advice.
+                ProofMark is not a law firm and does not provide legal advice.
               </div>
             </div>
           </Section>
