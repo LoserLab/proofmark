@@ -8,7 +8,7 @@
     "lint": "next lint"
   },
   "version": "1.0.0",
-  "description": "US-first screenplay protection via evidence packets, guided USCO filing worksheet, and optional WGA registration assistance.",
+  "description": "Blockchain proof-of-origin for creative work, powered by Avalanche.",
   "main": "next.config.js",
   "directories": {
     "lib": "lib"
@@ -353,8 +353,8 @@
     "yocto-queue": "^0.1.0"
   },
   "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "author": "ProofMark",
+  "license": "UNLICENSED",
   "devDependencies": {
     "@types/react": "19.2.8"
   }
