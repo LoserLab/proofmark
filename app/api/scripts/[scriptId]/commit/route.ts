@@ -39,7 +39,7 @@ export async function POST(req: Request) {
   }
 
   const bucket = config.storage.bucket;
-  const { data: file, error: dlErr } = await supabase.storage.from(bucket).download(version.storage_path);
+  const { data: file, error: dlErr } = await supabase.storage.from(bucket).download(version.file_path);
   if (dlErr) {
     console.error("[api/scripts/commit] File download error:", dlErr.message);
     return NextResponse.json({ error: "Failed to retrieve file" }, { status: 500 });
@@ -126,6 +126,9 @@ export async function POST(req: Request) {
   });
 
   return NextResponse.json({
+    ok: true,
+    scriptId,
+    versionId,
     sha256: sha,
     committedAt,
     receiptText: receipt,

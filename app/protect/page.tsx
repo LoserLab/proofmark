@@ -243,6 +243,7 @@ export default function ProtectPage() {
       }
       const uploadUrl = signed.signedUploadUrl || signed.uploadUrl;
       const storagePath = signed.storagePath || signed.filePath || signed.path;
+      const uploadVersionId = signed.versionId || signed.version_id;
       if (!uploadUrl || !storagePath) throw new Error("Missing uploadUrl or storagePath.");
 
       // Store metadata for pre-fill
@@ -287,6 +288,8 @@ export default function ProtectPage() {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({
+          scriptId: sid,
+          versionId: uploadVersionId,
           filePath: storagePath,
           fileSize: f.size,
           mimeType: f.type || "application/octet-stream",
