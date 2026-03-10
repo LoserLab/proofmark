@@ -165,6 +165,7 @@ export async function POST(req: Request) {
   }
 
   return NextResponse.json({
+    ok: true,
     scriptId: script.id,
     versionId: version.id,
     storagePath,
