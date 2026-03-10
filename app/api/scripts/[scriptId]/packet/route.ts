@@ -59,9 +59,20 @@ async function generatePacket(req: Request, { params }: { params: { scriptId: st
     console.error("[api/scripts/packet] Version fetch error:", vErr.message);
     return NextResponse.json({ error: "Version not found" }, { status: 404 });
   }
-  if (!version.sha256 || !version.committed_at) {
+  // DB column is hash_sha256, normalize for downstream use
+  const sha256 = version.hash_sha256 || version.sha256;
+  if (!sha256) {
+    console.error("[api/scripts/packet] Version not committed:", {
+      versionId,
+      hash_sha256: version.hash_sha256,
+      sha256: version.sha256,
+      committed_at: version.committed_at,
+      status: version.status
+    });
     return NextResponse.json({ error: "Version not committed yet" }, { status: 400 });
   }
+  // Attach normalized sha256 for downstream use
+  version.sha256 = sha256;
 
   // Check if packet already exists in storage
   if (version.packet_path) {

@@ -63,16 +63,21 @@ export async function POST(req: Request) {
 
   const chainEnabled = isBlockchainEnabled();
 
-  await supabase
-    .from("script_versions")
-    .update({
-      sha256: sha,
-      committed_at: committedAt,
-      status: "committed",
-      ...(chainEnabled ? { chain_status: "pending" } : {}),
-    })
-    .eq("id", versionId)
-    .eq("user_id", userId);
+  // Use database function to bypass PostgREST schema cache issues
+  const { error: updateErr } = await supabase.rpc('commit_version', {
+    p_version_id: versionId,
+    p_user_id: userId,
+    p_sha256: sha,
+    p_committed_at: committedAt,
+    p_chain_status: chainEnabled ? "pending" : null,
+  });
+
+  if (updateErr) {
+    console.error("[api/scripts/commit] commit_version RPC error:", updateErr.message);
+    return NextResponse.json({ error: "Failed to commit version" }, { status: 500 });
+  }
+
+  console.log("[api/scripts/commit] Update complete:", { versionId, sha, committedAt });
 
   await supabase.from("audit_log").insert({
     user_id: userId,
