@@ -78,7 +78,7 @@ See `.env.example` for required environment variables.
 
 ## Author
 
-Created by Heathen
+Created by LoserLabs
 
 ---
 
