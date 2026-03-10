@@ -50,3 +50,11 @@ supabase/.temp/
 
 # contracts build cache
 contracts/.next/
+
+# internal strategy docs (keep local only)
+docs/gtm-*.md
+docs/growth-*.md
+docs/video-*.md
+docs/stage*-*.md
+docs/archive/
+*-x-mirra.md
