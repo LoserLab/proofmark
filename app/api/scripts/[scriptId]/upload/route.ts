@@ -121,7 +121,8 @@ export async function POST(req: Request) {
     file_path: storagePath,
     original_filename: originalFilename,
     mime_type: mimeType,
-    byte_size,
+    file_size: size,
+    byte_size: size,
   };
 
   // Server-side logging (dev only)
