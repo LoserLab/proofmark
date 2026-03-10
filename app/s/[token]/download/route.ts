@@ -20,7 +20,7 @@ export async function GET(req: Request, { params }: { params: { token: string } 
 
   const { data: version, error: vErr } = await supabase
     .from("script_versions")
-    .select("storage_path, mime_type, original_filename")
+    .select("file_path, mime_type, original_filename")
     .eq("id", link.version_id)
     .single();
 
@@ -34,7 +34,7 @@ export async function GET(req: Request, { params }: { params: { token: string } 
   const bucket = config.storage.bucket;
   const { data: file, error: dlErr } = await supabase.storage
     .from(bucket)
-    .download(version.storage_path);
+    .download(version.file_path);
 
   if (dlErr || !file) return new NextResponse("Failed to load file.", { status: 500 });
 

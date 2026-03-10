@@ -68,7 +68,7 @@ export default async function ScriptDetailPage({
     .limit(50)
 
   // Get latest committed version for packet download
-  const latestCommittedVersion = versions?.find(v => v.sha256 && v.committed_at)
+  const latestCommittedVersion = versions?.find(v => (v.hash_sha256 || v.sha256) && v.committed_at)
   
   // Determine status and date
   const hasCommittedVersion = !!latestCommittedVersion

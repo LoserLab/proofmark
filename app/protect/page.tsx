@@ -209,7 +209,7 @@ export default function ProtectPage() {
         throw new Error(`${createEndpoint} ${createRes.status}: ${bodyText}`);
       }
       const createRaw = await createRes.json();
-      console.log("create response:", JSON.stringify(createRaw, null, 2));
+      if (process.env.NODE_ENV !== "production") console.log("create response:", JSON.stringify(createRaw, null, 2));
       if (createRaw.ok !== true) {
         throw new Error(`${createEndpoint} ok:false ${JSON.stringify(createRaw)}`);
       }
@@ -301,7 +301,7 @@ export default function ProtectPage() {
         throw new Error(`${commitEndpoint} ${commitRes.status}: ${bodyText}`);
       }
       const commitRaw = await commitRes.json();
-      console.log("commit response:", JSON.stringify(commitRaw, null, 2));
+      if (process.env.NODE_ENV !== "production") console.log("commit response:", JSON.stringify(commitRaw, null, 2));
       
       // Gate success on ok === true AND having both IDs
       if (commitRaw.ok !== true) {
