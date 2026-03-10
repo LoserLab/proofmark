@@ -74,7 +74,7 @@ export async function GET(
   const { data: version, error: vErr } = await supabase
     .from("script_versions")
     .select(
-      "id, original_filename, byte_size, mime_type, storage_path, committed_at"
+      "id, original_filename, byte_size, mime_type, file_path, committed_at"
     )
     .eq("id", link.version_id)
     .single();
@@ -122,11 +122,11 @@ export async function GET(
 
   // Construct evidence URL if file exists
   let evidenceUrl: string | null = null;
-  if (version.storage_path) {
+  if (version.file_path) {
     const bucket = config.storage.bucket;
     const { data: signedUrl } = await supabase.storage
       .from(bucket)
-      .createSignedUrl(version.storage_path, 3600); // 1 hour expiry
+      .createSignedUrl(version.file_path, 3600); // 1 hour expiry
     evidenceUrl = signedUrl?.signedUrl || null;
   }
 

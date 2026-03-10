@@ -77,7 +77,7 @@ export async function GET(
     await supabase.from("audit_log").insert({
       user_id: userId,
       script_id: scriptId,
-      version_id: versionId,
+      script_version_id: versionId,
       action: "snapshot_generated",
       metadata: { versionId },
     });
