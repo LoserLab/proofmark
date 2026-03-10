@@ -102,7 +102,7 @@ export async function POST(req: NextRequest) {
   if (uploadErr) {
     console.error("[api/v1/protect] Storage upload error:", uploadErr.message);
     // Cleanup: delete the script row
-    await supabase.from("scripts").delete().eq("id", scriptId);
+    await supabase.from("scripts").delete().eq("id", scriptId).eq("user_id", userId);
     return internalError("Failed to upload file");
   }
 
@@ -132,7 +132,7 @@ export async function POST(req: NextRequest) {
     console.error("[api/v1/protect] Version insert error:", verErr?.message);
     // Cleanup
     await supabase.storage.from(bucket).remove([storagePath]);
-    await supabase.from("scripts").delete().eq("id", scriptId);
+    await supabase.from("scripts").delete().eq("id", scriptId).eq("user_id", userId);
     return internalError("Failed to create version");
   }
 

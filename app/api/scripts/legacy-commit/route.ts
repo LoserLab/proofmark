@@ -39,7 +39,7 @@ export async function POST(req: Request) {
   const bucket = config.storage.bucket;
   const { data: file, error: dlErr } = await supabase.storage
     .from(bucket)
-    .download(version.storage_path);
+    .download(version.file_path);
 
   if (dlErr) {
     console.error("[api/scripts/legacy-commit] File download error:", dlErr.message);
@@ -62,18 +62,26 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Script not found" }, { status: 404 });
   }
 
-  await supabase
-    .from("script_versions")
-    .update({ sha256: sha, committed_at: committedAt })
-    .eq("id", versionId)
-    .eq("user_id", userId);
+  // Use RPC to bypass PostgREST schema cache issues
+  const { error: updateErr } = await supabase.rpc('commit_version', {
+    p_version_id: versionId,
+    p_user_id: userId,
+    p_sha256: sha,
+    p_committed_at: committedAt,
+    p_chain_status: null,
+  });
+
+  if (updateErr) {
+    console.error("[api/scripts/legacy-commit] commit_version RPC error:", updateErr.message);
+    return NextResponse.json({ error: "Failed to commit version" }, { status: 500 });
+  }
 
   await supabase.from("audit_log").insert({
     user_id: userId,
     script_id: scriptId,
-    version_id: versionId,
+    script_version_id: versionId,
     action: "upload_committed",
-    details: { sha256: sha, committedAt },
+    metadata: { sha256: sha, committedAt },
   });
 
   const receipt = buildReceiptText({

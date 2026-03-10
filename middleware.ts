@@ -1,12 +1,31 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { createServerClient } from "@supabase/ssr";
+import { rateLimit } from "@/lib/rate-limit";
 
 export async function middleware(request: NextRequest) {
+  // Rate limit API routes (30 requests per minute per IP)
+  if (request.nextUrl.pathname.startsWith("/api/")) {
+    const ip = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
+    const { limited } = rateLimit(`api:${ip}`, { maxRequests: 30, windowMs: 60_000 });
+
+    if (limited) {
+      return NextResponse.json(
+        { error: "Too many requests. Please try again later." },
+        { status: 429 }
+      );
+    }
+  }
+
   let response = NextResponse.next({
     request: {
       headers: request.headers,
     },
   });
+
+  // Skip Supabase session refresh for v1 API routes (they use API key auth)
+  if (request.nextUrl.pathname.startsWith("/api/v1/")) {
+    return response;
+  }
 
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const anon = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
@@ -36,7 +55,7 @@ export async function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
-    "/((?!_next/static|_next/image|favicon.ico|api/v1/|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico)$).*)",
+    "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico)$).*)",
   ],
 };
 

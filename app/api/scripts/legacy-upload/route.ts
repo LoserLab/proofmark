@@ -117,7 +117,7 @@ export async function POST(req: Request) {
   const insertPayload = {
     script_id: script.id,
     user_id: userId,
-    storage_path: storagePath,
+    file_path: storagePath,
     original_filename: originalFilename,
     mime_type: mimeType,
     byte_size,
@@ -147,9 +147,9 @@ export async function POST(req: Request) {
   await supabase.from("audit_log").insert({
     user_id: userId,
     script_id: script.id,
-    version_id: version.id,
+    script_version_id: version.id,
     action: "upload_started",
-    details: { originalFilename, mimeType, byteSize },
+    metadata: { originalFilename, mimeType, byteSize },
   });
 
   const bucket = config.storage.bucket;
