@@ -118,7 +118,7 @@ export async function POST(req: Request) {
   const insertPayload = {
     script_id: script.id,
     user_id: userId,
-    storage_path: storagePath,
+    file_path: storagePath,
     original_filename: originalFilename,
     mime_type: mimeType,
     byte_size,
