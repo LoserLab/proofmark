@@ -62,10 +62,11 @@ export async function POST(req: Request) {
     workMadeForHire,
     publicationStatus,
     preexistingMaterial,
-    originalFilename,
     mimeType,
-    byteSize,
   } = body;
+
+  const originalFilename = body.originalFilename || body.filename;
+  const byteSize = body.byteSize || body.size;
 
   if (!originalFilename || !mimeType || !byteSize) {
     return NextResponse.json({ error: "Missing fields" }, { status: 400 });
