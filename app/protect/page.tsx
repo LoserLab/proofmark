@@ -439,15 +439,45 @@ export default function ProtectPage() {
 
             <Stepper steps={steps} currentStep={currentStep} />
 
-            <div className={currentStep === 1 ? "space-y-6" : "grid md:grid-cols-12 gap-8 items-start"}>
+            <div className="space-y-6">
               {/* Main */}
-              <div className={currentStep === 1 ? "space-y-6" : "md:col-span-8 space-y-6"}>
+              <div className="space-y-6">
                 {currentStep === 1 && (
                   <>
-                    <Card
-                      title="Upload your draft"
-                      desc="PDF or DOCX recommended. ProofMark stores a fingerprint and records the timestamp."
-                    >
+                    <div className="rounded-lg border border-[var(--stroke)] bg-white p-6 shadow-sm">
+                      <div className="flex items-start justify-between gap-4">
+                        <div>
+                          <div className="text-sm font-medium text-[var(--text)]">Upload your draft</div>
+                          <div className="mt-2 text-sm text-[var(--muted)]">PDF or DOCX recommended. ProofMark stores a fingerprint and records the timestamp.</div>
+                        </div>
+                        <div className="flex shrink-0 gap-2">
+                          {[
+                            {
+                              label: "What gets recorded",
+                              tip: "Timestamp, cryptographic fingerprint (SHA-256), version lineage, file metadata, and optional sharing and access log.",
+                            },
+                            {
+                              label: "Privacy",
+                              tip: "You keep ownership of your work. ProofMark stores records and proof. Sharing links are token-based and can be revoked.",
+                            },
+                            {
+                              label: "Tip",
+                              tip: "Protect major milestones. ProofMark keeps the lineage clean.",
+                            },
+                          ].map((item) => (
+                            <div key={item.label} className="group relative">
+                              <span className="inline-flex items-center gap-1 rounded-full border border-[var(--stroke)] px-2.5 py-1 text-[11px] text-[var(--muted)] cursor-default hover:border-[var(--accent)] hover:text-[var(--text)] transition-colors">
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+                                {item.label}
+                              </span>
+                              <div className="absolute top-full right-0 mt-2 w-56 rounded-lg border border-[var(--stroke)] bg-white p-3 text-xs text-[var(--muted)] leading-relaxed shadow-lg opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-opacity z-10">
+                                {item.tip}
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                      <div className="mt-5">
                       <div className="flex flex-col gap-3">
                         {/* Drag-and-drop zone */}
                         <div
@@ -593,33 +623,6 @@ export default function ProtectPage() {
                           />
                         )}
                       </div>
-                    </Card>
-
-                    {/* Info cards row - only for step 0 */}
-                    <div className="grid gap-6 md:grid-cols-3">
-                      <div className="rounded-lg border border-[var(--stroke)] bg-white p-6 shadow-sm">
-                        <div className="text-sm font-medium text-[var(--text)]">What gets recorded</div>
-                        <ul className="mt-3 space-y-2 text-sm text-[var(--muted)]">
-                          <li>Timestamp of each protected version</li>
-                          <li>Cryptographic fingerprint (SHA-256)</li>
-                          <li>Version lineage and file metadata</li>
-                          <li>Optional sharing and access log</li>
-                        </ul>
-                      </div>
-
-                      <div className="rounded-lg border border-[var(--stroke)] bg-white p-6 shadow-sm">
-                        <div className="text-sm font-medium text-[var(--text)]">Privacy and control</div>
-                        <div className="mt-2 text-sm text-[var(--muted)] leading-relaxed">
-                          You keep ownership of your work. ProofMark stores records and proof.
-                          Sharing links are token-based and can be revoked if your system supports it.
-                        </div>
-                      </div>
-
-                      <div className="rounded-lg border border-[var(--stroke)] bg-white p-6 shadow-sm">
-                        <div className="text-sm font-medium text-[var(--text)]">Tip</div>
-                        <div className="mt-2 text-sm text-[var(--muted)] leading-relaxed">
-                          If you iterate often, protect major milestones. ProofMark will keep the lineage clean.
-                        </div>
                       </div>
                     </div>
 
@@ -642,10 +645,36 @@ export default function ProtectPage() {
                       />
                     )}
 
-                    <Card
-                      title="Draft details"
-                      desc="These details are used in your evidence pack and internal records."
-                    >
+                    <div className="rounded-lg border border-[var(--stroke)] bg-white p-6 shadow-sm">
+                      <div className="flex items-start justify-between gap-4">
+                        <div>
+                          <div className="text-sm font-medium text-[var(--text)]">Draft details</div>
+                          <div className="mt-2 text-sm text-[var(--muted)]">These details are used in your evidence pack and internal records.</div>
+                        </div>
+                        <div className="flex shrink-0 gap-2">
+                          {[
+                            {
+                              label: "Why this matters",
+                              tip: "Consistent titles and accurate work types strengthen your record if you ever need to reference it in a dispute or copyright filing.",
+                            },
+                            {
+                              label: "Work types",
+                              tip: "Categorizes your work for your records. Helps organize evidence if you protect multiple projects.",
+                            },
+                          ].map((item) => (
+                            <div key={item.label} className="group relative">
+                              <span className="inline-flex items-center gap-1 rounded-full border border-[var(--stroke)] px-2.5 py-1 text-[11px] text-[var(--muted)] cursor-default hover:border-[var(--accent)] hover:text-[var(--text)] transition-colors">
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+                                {item.label}
+                              </span>
+                              <div className="absolute top-full right-0 mt-2 w-56 rounded-lg border border-[var(--stroke)] bg-white p-3 text-xs text-[var(--muted)] leading-relaxed shadow-lg opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-opacity z-10">
+                                {item.tip}
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                      <div className="mt-5">
                       <div className="space-y-4">
                       {/* Helper copy about pre-filling */}
                       {fileMetadata?.suggestedTitle && (
@@ -709,19 +738,42 @@ export default function ProtectPage() {
                         />
                       </div>
                     </div>
-                  </Card>
+                    </div>
+                  </div>
                   </div>
                 )}
 
                 {currentStep === 3 && (
-                  <Card
-                    title="Review"
-                    desc="Preview what will be recorded in your evidence packet."
-                  >
-                    <div className="text-xs text-[var(--muted)] leading-relaxed">
-                      ProofMark will generate an evidence pack containing timestamps, a file fingerprint,
-                      and version lineage. ProofMark is not a law firm and does not provide legal advice.
+                  <div className="rounded-lg border border-[var(--stroke)] bg-white p-6 shadow-sm">
+                    <div className="flex items-start justify-between gap-4">
+                      <div>
+                        <div className="text-sm font-medium text-[var(--text)]">Review</div>
+                        <div className="mt-2 text-sm text-[var(--muted)]">Preview what will be recorded in your evidence packet.</div>
+                      </div>
+                      <div className="flex shrink-0 gap-2">
+                        {[
+                          {
+                            label: "What's included",
+                            tip: "Your evidence pack contains a PDF certificate, blockchain receipt, original file snapshot, metadata summary, and audit log.",
+                          },
+                          {
+                            label: "Legal",
+                            tip: "ProofMark provides timestamped evidence, not legal advice. This record can support a copyright claim but is not a substitute for registration.",
+                          },
+                        ].map((item) => (
+                          <div key={item.label} className="group relative">
+                            <span className="inline-flex items-center gap-1 rounded-full border border-[var(--stroke)] px-2.5 py-1 text-[11px] text-[var(--muted)] cursor-default hover:border-[var(--accent)] hover:text-[var(--text)] transition-colors">
+                              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+                              {item.label}
+                            </span>
+                            <div className="absolute top-full right-0 mt-2 w-56 rounded-lg border border-[var(--stroke)] bg-white p-3 text-xs text-[var(--muted)] leading-relaxed shadow-lg opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-opacity z-10">
+                              {item.tip}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
                     </div>
+                    <div className="mt-5">
                     <div className="mt-4 flex justify-end">
                       <button
                         type="button"
@@ -762,7 +814,8 @@ export default function ProtectPage() {
                         notes={notes}
                       />
                     </div>
-                  </Card>
+                    </div>
+                  </div>
                 )}
 
                 {currentStep === 4 && (
@@ -976,64 +1029,42 @@ export default function ProtectPage() {
 
                 {/* Nav buttons */}
                 <div className="flex items-center justify-between pt-2">
-                  <button
-                    type="button"
-                    onClick={back}
-                    className="px-4 py-2 rounded-md text-sm border border-[var(--stroke)] text-[var(--text)] hover:border-[var(--accent)] hover:text-[var(--accent)] transition-colors cursor-pointer focus:outline-none focus:ring-2 focus:ring-[var(--accent)] focus:ring-offset-2"
-                  >
-                    Back
-                  </button>
+                  {!(currentStep === 4 && packetStatus === "done") && (
+                    <button
+                      type="button"
+                      onClick={back}
+                      className="px-4 py-2 rounded-md text-sm border border-[var(--stroke)] text-[var(--text)] hover:border-[var(--accent)] hover:text-[var(--accent)] transition-colors cursor-pointer focus:outline-none focus:ring-2 focus:ring-[var(--accent)] focus:ring-offset-2"
+                    >
+                      Back
+                    </button>
+                  )}
+                  {currentStep === 4 && packetStatus === "done" && <div />}
 
-                  {(() => {
-                    console.log("[protect] render Continue", { disabled: !canContinue, currentStep, uploadState });
-                    return (
-                      <button
-                        type="button"
-                        onClick={next}
-                        disabled={!canContinue}
-                        className={[
-                          "px-5 py-2 rounded-md text-sm font-medium text-white transition-colors",
-                          canContinue
-                            ? "bg-[var(--accent)] hover:opacity-90 transition-opacity focus:outline-none focus:ring-2 focus:ring-[var(--accent)] focus:ring-offset-2 cursor-pointer"
-                            : "bg-[var(--stroke)] cursor-not-allowed opacity-50",
-                        ].join(" ")}
-                      >
-                        Continue
-                      </button>
-                    );
-                  })()}
+                  {currentStep === 4 && packetStatus === "done" && scriptId ? (
+                    <a
+                      href={`/app/scripts/${scriptId}`}
+                      className="px-5 py-2 rounded-md text-sm font-medium text-white bg-[var(--accent)] hover:opacity-90 transition-opacity focus:outline-none focus:ring-2 focus:ring-[var(--accent)] focus:ring-offset-2 cursor-pointer"
+                    >
+                      View record
+                    </a>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={next}
+                      disabled={!canContinue}
+                      className={[
+                        "px-5 py-2 rounded-md text-sm font-medium text-white transition-colors",
+                        canContinue
+                          ? "bg-[var(--accent)] hover:opacity-90 transition-opacity focus:outline-none focus:ring-2 focus:ring-[var(--accent)] focus:ring-offset-2 cursor-pointer"
+                          : "bg-[var(--stroke)] cursor-not-allowed opacity-50",
+                      ].join(" ")}
+                    >
+                      Continue
+                    </button>
+                  )}
                 </div>
               </div>
 
-              {/* Side rail - hidden for step 0, shown for other steps */}
-              {currentStep !== 1 && (
-                <div className="md:col-span-4 space-y-6">
-                  <div className="rounded-lg border border-[var(--stroke)] bg-white p-6 shadow-sm">
-                    <div className="text-sm font-medium text-[var(--text)]">What gets recorded</div>
-                    <ul className="mt-3 space-y-2 text-sm text-[var(--muted)]">
-                      <li>Timestamp of each protected version</li>
-                      <li>Cryptographic fingerprint (SHA-256)</li>
-                      <li>Version lineage and file metadata</li>
-                      <li>Optional sharing and access log</li>
-                    </ul>
-                  </div>
-
-                  <div className="rounded-lg border border-[var(--stroke)] bg-white p-6 shadow-sm">
-                    <div className="text-sm font-medium text-[var(--text)]">Privacy and control</div>
-                    <div className="mt-2 text-sm text-[var(--muted)] leading-relaxed">
-                      You keep ownership of your work. ProofMark stores records and proof.
-                      Sharing links are token-based and can be revoked if your system supports it.
-                    </div>
-                  </div>
-
-                  <div className="rounded-lg border border-[var(--stroke)] bg-white p-6 shadow-sm">
-                    <div className="text-sm font-medium text-[var(--text)]">Tip</div>
-                    <div className="mt-2 text-sm text-[var(--muted)] leading-relaxed">
-                      If you iterate often, protect major milestones. ProofMark will keep the lineage clean.
-                    </div>
-                  </div>
-                </div>
-              )}
             </div>
 
             {/* Bottom legal note */}
