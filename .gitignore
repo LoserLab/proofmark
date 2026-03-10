@@ -58,3 +58,12 @@ docs/video-*.md
 docs/stage*-*.md
 docs/archive/
 *-x-mirra.md
+
+# video projects (Remotion, local only)
+proofmark-video/
+draftlock-video/
+
+# local media
+*.mov
+*.mp4
+PM-Upload Screen.png
